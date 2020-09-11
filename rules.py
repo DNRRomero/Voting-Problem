@@ -3,23 +3,25 @@ from data_structure import *
 
 
 def stableMajority(t, array: np.ndarray, config: Config, index):
-    state = 1 if np.dot(config.adj[index], array[t]) + array[t][index] > 0 else -1
+    even = 1 if config.nodes[index].degree % 2 == 0 else 0
+    state = 1 if config.prod(t, array, index) + even*array[t][index] > 0 else -1
     return state
 
 
 def unstableMajority(t, array, config: Config, index):
-    state = 1 if np.dot(config.adj[index], array[t]) - array[t][index] < 0 else -1
+    even = 1 if config.nodes[index].degree % 2 == 0 else 0
+    state = 1 if config.prod(t, array, index) - even*array[t][index] > 0 else -1
     return state
 
 
 def oneBiased(t, array, config: Config, index):
-    state = 1 if np.dot(config.adj[index], array[t]) >= 0 else -1
+    state = 1 if config.prod(t, array, index) >= 0 else -1
 
     return state
 
 
 def zeroBiased(t, array, config: Config, index):
-    state = 1 if np.dot(config.adj[index], array[t]) > 0 else -1
+    state = 1 if config.prod(t, array, index) > 0 else -1
     return state
 
 
@@ -28,6 +30,6 @@ def stiff(t, array, config: Config, index):
 
 
 def getRules():
-    rules = {Action.STABLE: unstableMajority, Action.UNSTABLE: unstableMajority, Action.ONE_BIASED: oneBiased,
+    rules = {Action.STABLE: stableMajority, Action.UNSTABLE: unstableMajority, Action.ONE_BIASED: oneBiased,
              Action.ZERO_BIASED: zeroBiased, Action.STIFF: stiff}
     return rules

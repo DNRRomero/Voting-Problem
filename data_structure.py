@@ -3,12 +3,18 @@ from typing import List
 from scipy import sparse
 
 
+class ConfigType(Enum):
+    Ring = 0
+    Torus = 1
+    Graph = 2
+
+
 class State(IntEnum):
     ON = 1
     OFF = -1
 
 
-class Action(Enum):
+class Rule(Enum):
     STABLE = 0
     UNSTABLE = 1
     ONE_BIASED = 2
@@ -48,12 +54,17 @@ class Node(object):
     def state(self, val):
         self._state = val
 
+    @rule.setter
+    def rule(self, val):
+        self._rule = val
+
 
 class Config(object):
-    def __init__(self, adj: sparse.csr_matrix, nodes):
+    def __init__(self, adj: sparse.csr_matrix, nodes, type: ConfigType):
         self._adj = adj
         self._nodes: List[Node] = nodes
         self._size = len(nodes)
+        self._type = type
 
     @property
     def size(self):
@@ -67,6 +78,10 @@ class Config(object):
     def adj(self):
         return self._adj
 
+    @property
+    def type(self):
+        return self._type
+
     def prod(self, t, array, index):
         return self.adj[index].dot(array[t])[0]
 
@@ -75,7 +90,7 @@ class Config(object):
         for i in range(self.size):
             self.nodes[i].state = states[i]
 
-    def setRules(self, rules: List[Action]):
+    def setRules(self, rules: List[Rule]):
         assert len(rules) == self.size
         for i in range(self.size):
             self.nodes[i].rule = rules[i]

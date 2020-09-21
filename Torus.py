@@ -30,10 +30,12 @@ def set_adjacency(n, m, deg, neighs):
     return adj
 
 
-def createTorus(n: int, m: int, p_action=0.5, p_state=0.5, neighs=Neighborhood.NEUMANN, action1=Action.STABLE,
-                action2=Action.UNSTABLE):
+def createTorus(n: int, m: int = None, p_action=0.5, p_state=0.5, states= None, rules = None, neighs=Neighborhood.NEUMANN,
+                action1=Rule.STABLE, action2=Rule.UNSTABLE):
     """
 
+    :param rules:
+    :param states:
     :param n: number of rows
     :param m: number of columns
     :param p_action: probability for asigning two actions
@@ -44,11 +46,14 @@ def createTorus(n: int, m: int, p_action=0.5, p_state=0.5, neighs=Neighborhood.N
     :return: a Config object containing an adjacency matrix and a node profile
     """
     deg = 4 if neighs == Neighborhood.NEUMANN else 8
-    nodes = [Node(i, np.random.choice(a=[State.ON, State.OFF], p=[p_state, 1 - p_state]),
-                  np.random.choice(a=[action1, action2], p=[p_action, 1 - p_action]), deg) for i in range(n * m)]
+    if m is None:
+        m = n
+    state = lambda i: np.random.choice(a=[State.ON, State.OFF], p=[p_state, 1 - p_state]) if states is None else states[i]
+    rule = lambda i: np.random.choice(a=[action1, action2], p=[p_action, 1 - p_action]) if rules is None else rules[i]
+    nodes = [Node(i, state(i), rule(i), deg) for i in range(n * m)]
 
     adj = set_adjacency(n, m, deg, neighs)
 
-    torus = Config(adj, nodes)
+    torus = Config(adj, nodes, type=ConfigType.Torus)
 
     return torus

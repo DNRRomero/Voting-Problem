@@ -1,11 +1,11 @@
 from rules import *
 from metric import *
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+from utilities import *
 
 
-def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, sequential: bool = True):
+def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, sequential: bool = False, light=False):
     """
+    :param light:
     :param sequential:
     :param config:
     :param perm:
@@ -19,97 +19,70 @@ def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, sequent
     metrics = getMetrics()
     out = {}
     seq = config.size if sequential else 1
-    array = np.zeros((steps*seq + 1, config.size))
+    size = 2 if light else steps * seq + 1
+    array = np.zeros((size, config.size), dtype=np.int8)
     for index in range(config.size):
         array[0][index] = config.nodes[index].state
     t = 1
-    if sequential:
+    if sequential and not light:
         while t <= config.size * steps:
             for index in perm:
                 array[t] = array[t - 1]
                 state = rules[config.nodes[index].rule](t - 1, array, config, index)
                 array[t][index] = state
                 t += 1
-
-    else:
+    elif light:
         while t <= steps:
             for index in perm:
-                state = rules[config.nodes[index].rule](t - 1, array, config, index)
+                array[t % 2] = array[(t - 1) % 2]
+                state = rules[config.nodes[index].rule]((t - 1) % 2, array, config, index)
+                array[t % 2][index] = state
+                t += 1
+    else:
+        while t <= steps:
+            array[t] = array[t - 1]
+            for index in perm:
+                state = rules[config.nodes[index].rule](t, array, config, index)
                 array[t][index] = state
             t += 1
 
     for metric in metricList:
-        out[Metric.metric] = metrics[metric](array, config)
+        out[metric] = metrics[metric](array, config)
 
-    out[Metric.EV] = array
+    return array, out
+
+
+def multi_evolve(configs: List[Config], perm: np.ndarray, steps=100, metricList=None, sequential: bool = False):
+    out = {}
+    for config in configs:
+        _, metrics = evolve(config, perm, steps, metricList, sequential, light=False)
+        for metric in metrics:
+            if metric in out:
+                out[metric].append(metrics[metric])
+            else:
+                out[metric] = [metrics[metric]]
+
     return out
 
 
-def plot_grid(evolution, shape=None, sl=-1, title='', colormap='Greys', vmin=None, vmax=None,
-              node_annotations=None, show_grid=False):
-    if shape is not None:
-        evolution = evolution.reshape((len(evolution), shape[0], shape[1]))[sl]
-    cmap = plt.get_cmap(colormap)
-    plt.title(title)
-    plt.imshow(evolution, interpolation='none', cmap=cmap, vmin=vmin, vmax=vmax)
+def config_sampler(configType: ConfigType, n, steps, perm, rules, metricList, samples: int,
+                   p_actions: List[float], p_state=0.5):
+    state = 'p_a'
+    cycles = {'length': np.zeros(samples * len(p_actions)), state: np.zeros(samples * len(p_actions))}
 
-    if node_annotations is not None:
-        for i in range(len(node_annotations)):
-            for j in range(len(node_annotations[i])):
-                plt.text(j, i, node_annotations[i][j], ha="center", va="center", color="grey",
-                         fontdict={'weight': 'bold', 'size': 6})
+    prof = {state: np.zeros(samples * len(p_actions))}
+    for metric in metricList:
+        prof[metric] = np.zeros(samples * len(p_actions))
 
-    if show_grid:
-        plt.grid(which='major', axis='both', linestyle='-', color='grey', linewidth=0.5)
-        plt.xticks(np.arange(-.5, len(evolution[0]), 1), "")
-        plt.yticks(np.arange(-.5, len(evolution), 1), "")
-        plt.tick_params(axis='both', which='both', length=0)
-
-    plt.show()
-
-
-def animate(activities, title='', shape=None, save=False, interval=500, colormap='Greys', vmin=None, vmax=None,
-            name='evolved'):
-    if shape is not None:
-        activities = _reshape_for_animation(activities, shape)
-    cmap = plt.get_cmap(colormap)
-    fig, ax = plt.subplots()
-    ax.set_title(title)
-    im = ax.imshow(activities[0], cmap=cmap, vmin=vmin, vmax=vmax)
-
-    def update_fig(index):
-
-        im.set_array(activities[index])
-        ax.set_xlabel('Step '+str(index))
-        return im,
-
-    ani = animation.FuncAnimation(fig, update_fig, frames=len(activities), interval=interval, blit=True)
-    if save:
-        ani.save(name + '.gif', dpi=80, writer="imagemagick")
-    return ani
-
-
-def _reshape_for_animation(evol, shape):
-    if len(shape) == 1:
-        assert shape[0] == len(evol[0]), "shape must equal the length of an activity vector"
-        new_activities = []
-        for i, a in enumerate(evol):
-            new_activity = []
-            new_activity.extend(evol[0:i + 1])
-            while len(new_activity) < len(evol):
-                new_activity.append([0] * len(evol[0]))
-            new_activities.append(new_activity)
-        return np.array(new_activities)
-    elif len(shape) == 2:
-        return np.reshape(evol, (len(evol), shape[0], shape[1]))
-    else:
-        raise Exception("shape must be a tuple of length 1 or 2")
-
-
-def plot_metrics(metrics):
-    fig, axs = plt.subplots(nrows=len(metrics), sharex='all')
-    for i, metric in enumerate(metrics):
-        data = metrics[str(metric)]
-        axs[i].set_title(metric)
-        axs[i].plot(range(len(data)), data)
-
+    for i, p in enumerate(p_actions):
+        ring = createConfig(configType, size=n, rules=rules[i])
+        for j in range(samples):
+            states = [np.random.choice(a=[State.ON, State.OFF], p=[p_state, 1 - p_state]) for i in range(n)]
+            ring.setStates(states)
+            evol, metrics = evolve(config=ring, perm=perm, steps=steps, metricList=metricList)
+            pos = i * samples + j
+            cycles['length'][pos] = cycle_length(evol)
+            cycles[state][pos] = p_actions[i]
+            for e in metrics:
+                prof[e][pos] = metrics[e][-1]
+            prof[state][pos] = p_actions[i]

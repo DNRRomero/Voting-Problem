@@ -30,6 +30,6 @@ def stiff(t, array, config: Config, index):
 
 
 def getRules():
-    rules = {Action.STABLE: stableMajority, Action.UNSTABLE: unstableMajority, Action.ONE_BIASED: oneBiased,
-             Action.ZERO_BIASED: zeroBiased, Action.STIFF: stiff}
+    rules = {Rule.STABLE: stableMajority, Rule.UNSTABLE: unstableMajority, Rule.ONE_BIASED: oneBiased,
+             Rule.ZERO_BIASED: zeroBiased, Rule.STIFF: stiff}
     return rules

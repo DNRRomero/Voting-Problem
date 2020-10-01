@@ -58,13 +58,16 @@ class Node(object):
     def rule(self, val):
         self._rule = val
 
+    def __repr__(self):
+        return "Node([{0}, {1}, {2}, {3}])".format(repr(self.id), repr(self.state), repr(self.rule), repr(self.degree))
+
 
 class Config(object):
-    def __init__(self, adj: sparse.csr_matrix, nodes, type: ConfigType):
+    def __init__(self, adj: sparse.csr_matrix, nodes, tp: ConfigType):
         self._adj = adj
         self._nodes: List[Node] = nodes
         self._size = len(nodes)
-        self._type = type
+        self._type = tp
 
     @property
     def size(self):

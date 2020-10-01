@@ -54,6 +54,6 @@ def createTorus(n: int, m: int = None, p_action=0.5, p_state=0.5, states= None, 
 
     adj = set_adjacency(n, m, deg, neighs)
 
-    torus = Config(adj, nodes, type=ConfigType.Torus)
+    torus = Config(adj, nodes, tp=ConfigType.Torus)
 
     return torus

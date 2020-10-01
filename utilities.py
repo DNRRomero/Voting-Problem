@@ -1,7 +1,9 @@
 import numpy as np
 import scipy.spatial as scp
+
+import Ring
+import Torus
 from data_structure import *
-import Ring, Torus
 
 
 def primes_up_to(n):
@@ -25,7 +27,7 @@ def cycle_length(array: np.ndarray):
     return steps + 1
 
 
-def createConfig(configType: ConfigType, size, p_action=None, p_state=None, rules=None, states=None):
+def createConfig(configType: ConfigType, **kwargs):
     switcher = {
         ConfigType.Ring:
             Ring.createRing,
@@ -35,4 +37,4 @@ def createConfig(configType: ConfigType, size, p_action=None, p_state=None, rule
 
     }
     func = switcher.get(configType, lambda: "invalid")
-    return func(n=size, p_action=p_action, p_state=p_state, states=states, rules=rules)
+    return func(**kwargs)

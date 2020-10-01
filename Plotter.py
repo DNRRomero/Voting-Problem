@@ -1,5 +1,6 @@
-import numpy
+import numpy as np
 from matplotlib import pyplot as plt, animation as animation
+import seaborn as sns
 
 
 def plot_grid(evolution, shape=None, sl=-1, title='', colormap='Greys', vmin=None, vmax=None,
@@ -116,3 +117,57 @@ def plot_multi_metrics(metrics, labels, title=''):
             ax[i].set_title(metric.name)
             ax[i].legend(handles=plots, title=title, loc='upper right')
         plt.show()
+
+
+def plot_cycle_hist(dataFrame, var):
+    facet = sns.FacetGrid(dataFrame,  # the dataframe to pull from
+                          row="p_a",  # define the column for each subplot row to be differentiated by
+                          hue="p_a",  # define the column for each subplot color to be differentiated by
+                          aspect=10,  # aspect * height = width
+                          height=1.5,  # height of each subplot
+                          )
+    facet.map(sns.histplot, var, discrete=True, stat="probability")
+
+    def label(x, color, label):
+        ax = plt.gca()  # get the axes of the current object
+        ax.text(0, .2,  # location of text
+                label,  # text label
+                fontweight="bold", color=color, size=20,  # text attributes
+                ha="left", va="center",  # alignment specifications
+                transform=ax.transAxes)  # specify axes of transformation
+
+    facet.map(label, var)  # the function counts as a plotting object!
+
+    facet.set_titles("")  # set title to blank
+    facet.set(yticks=[])  # set y ticks to blank
+    facet.despine(bottom=True, left=True)  # remove 'spines'
+
+    return facet
+
+
+def plot_energy_kde(dataFrame, var):
+    facet = sns.FacetGrid(dataFrame,  # the dataframe to pull from
+                          row="p_a",  # define the column for each subplot row to be differentiated by
+                          hue="p_a",  # define the column for each subplot color to be differentiated by
+                          aspect=10,  # aspect * height = width
+                          height=1.5,  # height of each subplot
+                          )
+    facet.map(sns.kdeplot, var, shade=True, alpha=1, lw=1.5, bw_adjust=0.2)
+    facet.map(sns.kdeplot, var, lw=4, bw_adjust=0.2)
+    facet.map(plt.axhline, y=0, lw=4)
+
+    def label(x, color, label):
+        ax = plt.gca()  # get the axes of the current object
+        ax.text(0, .2,  # location of text
+                label,  # text label
+                fontweight="bold", color=color, size=20,  # text attributes
+                ha="left", va="center",  # alignment specifications
+                transform=ax.transAxes)  # specify axes of transformation
+
+    facet.map(label, var)  # the function counts as a plotting object!
+
+    facet.set_titles("")  # set title to blank
+    facet.set(yticks=[])  # set y ticks to blank
+    facet.despine(bottom=True, left=True)  # remove 'spines'
+
+    return facet

@@ -37,6 +37,8 @@ if seed is not None:
     np.random.seed(seed)
 pi = np.random.permutation(n) if seed is not None else np.array([i for i in range(n)])
 
+np.random.seed()
+
 metricList = [Metric.SpinGlass, Metric.Magnetization]
 rules = [[np.random.choice(a=[Rule.STABLE, Rule.UNSTABLE], p=[p, 1 - p]) for i in range(n)] for p in p_actions]
 

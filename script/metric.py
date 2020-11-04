@@ -1,6 +1,8 @@
-from .data_structure import *
 import numpy as np
 import scipy.spatial as scp
+from enum import Enum
+
+from data_structure import Config
 
 
 def density(array: np.ndarray, config: Config, single=0):
@@ -13,7 +15,7 @@ def spinGlass(array: np.ndarray, config: Config, single=0):
     steps, size = array.shape
     # b = np.array([node.degree / 2 + (0.5 if node.rule == Rule.STABLE else 0) for node in config.nodes])
     energy = lambda x: -0.5 * (x.dot(config.adj.dot(x)))
-    return [(energy(array[i]))/config.edges for i in range(steps)]
+    return [(energy(array[i])) / config.edges for i in range(steps)]
 
 
 def magnetization(array: np.ndarray, config: Config = None, single=0):

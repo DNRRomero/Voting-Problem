@@ -1,9 +1,12 @@
-from .utilities import *
-from .data_structure import *
+import numpy as np
+from typing import List
 import scipy.spatial as scp
 import pickle
 import itertools
 import pandas as pd
+
+from utils import setup, createConfig, cycle_length
+from data_structure import Rule, State, ConfigType, Config
 
 
 def cycleCheck(config: Config, steps, array, t, fixedPoints=False):

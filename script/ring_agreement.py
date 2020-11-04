@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
-from .data_structure import State, Rule, ConfigType
-from .metric import Metric, magnetization
-from .utilities import createConfig, cycle_length
-from .Evolve import evolve
+from data_structure import State, Rule, ConfigType
+from metric import Metric, magnetization
+from utils import createConfig, cycle_length
+from Evolve import evolve
 
 n = 256
 c_type = ConfigType.Ring

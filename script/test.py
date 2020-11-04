@@ -3,7 +3,7 @@ from . import Plotter
 from . import Ring
 from . import Torus
 from .metric import *
-from . import utilities
+from . import utils
 
 
 def torus():
@@ -35,7 +35,7 @@ def ring():
 
 def blocks():
     k = 6
-    primes = utilities.primes_up_to(k)
+    primes = utils.primes_up_to(k)
     n = primes.sum() + 3 * len(primes)
     pi = np.array([i for i in range(n)])
     states = [0 for i in range(n)]

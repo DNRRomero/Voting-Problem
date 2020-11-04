@@ -1,5 +1,5 @@
 import numpy as np
-from .data_structure import *
+from data_structure import Config, Rule
 
 
 def stableMajority(t, array: np.ndarray, config: Config, index):

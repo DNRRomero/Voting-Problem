@@ -3,10 +3,10 @@ import pandas as pd
 import json
 import sys
 
-from .Evolve import evolve
-from .data_structure import ConfigType, Rule, State
-from .metric import Metric
-from .utilities import createConfig, cycle_length
+from Evolve import evolve
+from data_structure import ConfigType, Rule, State
+from metric import Metric
+from utils import createConfig, cycle_length
 
 
 # values = json.load(sys.stdin.read(n=1))

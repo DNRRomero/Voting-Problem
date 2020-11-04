@@ -1,6 +1,7 @@
 import numpy as np
-from .data_structure import *
 from scipy import sparse
+
+from data_structure import Neighborhood, Config, ConfigType, Rule, Node, State
 
 
 def set_adjacency(n, m, deg, neighs):

@@ -14,9 +14,9 @@ from utils import createConfig, cycle_length
 # steps = int(arg[2])
 n = 256
 steps = 3000
-# seed = 654798203
-seed = None
-stab_range = 'fixed'
+seed = 654798203
+#seed = None
+stab_range = 'var'
 size = n
 c_type = ConfigType.Ring
 p_state = 0.5

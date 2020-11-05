@@ -15,7 +15,7 @@ np.random.seed(seed)
 pi = np.random.permutation(n)
 metricList = [Metric.SpinGlass, Metric.Magnetization]
 magnetList = [0]
-samples = 100
+
 
 agree = {'init_magnet': [], 'length': [], 'Magnetization_mean': [], 'Magnetization_min': [], 'Magnetization_max': [],
          'Magnetization_std': [], 'SpinGlass': [], 'unstables': []}
@@ -24,6 +24,7 @@ conf = createConfig(ConfigType.Ring, n=n)
 for i, mag in enumerate(magnetList):
     init_states = [State.ON] * round((size * (0.5 + mag / 2)) - 10 ** (-9)) + [State.OFF] * round(
         (size * (0.5 - mag / 2) + 10 ** (-9)))
+    np.random.seed()
     np.random.shuffle(init_states)
     init_rule = np.array([Rule.STABLE] * size)
     curr_rule = init_rule

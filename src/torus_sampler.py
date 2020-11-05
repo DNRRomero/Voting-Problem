@@ -14,8 +14,8 @@ from utils import createConfig, cycle_length
 # steps = int(arg[2])
 n = 16
 steps = 3000
-# seed = 654798203
-seed = None
+seed = 654798203
+# seed = None
 stab_range = 'fixed'
 size = n**2
 c_type = ConfigType.Torus
@@ -35,12 +35,12 @@ else:
 
 if seed is not None:
     np.random.seed(seed)
-pi = np.random.permutation(n) if seed is not None else np.array([i for i in range(n)])
+pi = np.random.permutation(size) if seed is not None else np.array([i for i in range(size)])
 
 np.random.seed()
 
 metricList = [Metric.SpinGlass, Metric.Magnetization]
-rules = [[np.random.choice(a=[Rule.STABLE, Rule.UNSTABLE], p=[p, 1 - p]) for i in range(n)] for p in p_actions]
+rules = [[np.random.choice(a=[Rule.STABLE, Rule.UNSTABLE], p=[p, 1 - p]) for i in range(size)] for p in p_actions]
 
 state = '$p_{stable}$'
 c_len = 'length'

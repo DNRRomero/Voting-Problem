@@ -11,10 +11,10 @@ file_list = glob.glob(source)
 
 
 aux = file_list[0].rsplit('_', maxsplit=2)[0].rsplit('/', maxsplit=1)[1]
-print(aux)
+
 title = '{0}.csv'.format(aux)
-print(title)
-df_list = [pd.read_table(file) for file in file_list]
+
+df_list = [pd.read_table(file, sep=',') for file in file_list]
 df = pd.concat(df_list)
 
 dout = '../../data/{0}/{1}'.format(conf_type, title)

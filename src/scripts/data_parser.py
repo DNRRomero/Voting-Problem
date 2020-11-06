@@ -1,5 +1,6 @@
 import sys
 import glob
+import os
 import pandas as pd
 
 args = sys.argv
@@ -20,5 +21,8 @@ df = pd.concat(df_list)
 dout = '../../data/{0}/{1}'.format(conf_type, title)
 print(dout)
 df.to_csv(dout, encoding='utf-8', index=False)
+
+for file in file_list:
+    os.remove(file)
 
 

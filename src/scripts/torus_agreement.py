@@ -7,20 +7,20 @@ from ..modules.metric import Metric, magnetization
 from ..modules.utils import createConfig, cycle_length
 from ..modules.Evolve import evolve
 
-n = 256
+n = 16
 c_type = ConfigType.Ring
-size = n
+size = n**2
 p_state = 0.5
 seed = 654798203
 steps = 3000
 np.random.seed(seed)
-pi = np.random.permutation(n)
+pi = np.random.permutation(size)
 metricList = [Metric.SpinGlass, Metric.Magnetization]
 magnetList = [0]
 
 agree = {'init_magnet': [], 'length': [], 'Magnetization_mean': [], 'Magnetization_min': [], 'Magnetization_max': [],
          'Magnetization_std': [], 'SpinGlass': [], 'unstables': []}
-conf = createConfig(ConfigType.Ring, n=n)
+conf = createConfig(ConfigType.Torus, n=n)
 
 for i, mag in enumerate(magnetList):
     init_states = [State.ON] * round((size * (0.5 + mag / 2)) - 10 ** (-9)) + [State.OFF] * round(

@@ -1,11 +1,11 @@
 import numpy as np
 import scipy.spatial as scp
 
-import Ring
-import Torus
-from data_structure import ConfigType
-from metric import magnetization, getMetrics
-from rules import getRules
+from . import Ring
+from . import Torus
+from .data_structure import ConfigType
+from .metric import magnetization, getMetrics
+from .rules import getRules
 
 
 def primes_up_to(n):

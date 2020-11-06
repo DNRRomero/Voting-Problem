@@ -2,7 +2,7 @@ import numpy as np
 import scipy.spatial as scp
 from enum import Enum
 
-from data_structure import Config
+from .data_structure import Config
 
 
 def density(array: np.ndarray, config: Config, single=0):

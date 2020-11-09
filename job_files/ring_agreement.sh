@@ -7,9 +7,9 @@
 #SBATCH --mem=100
 #SBATCH --mail-user=dramirez@dim.uchile.cl
 #SBATCH --mail-type=ALL
-#SBATCH --array=1-400%80
-#SBATCH -o ../data/Guacolda/out/Ring_agreement_$n_%A_%a.out
-#SBATCH -e ../data/Guacolda/err/Ring_agreement_$n_%A_%a.err
+#SBATCH --array=1-81%80
+#SBATCH -o ../data/Guacolda/out/Ring_agreement_256_%A_%a.out
+#SBATCH -e ../data/Guacolda/err/Ring_agreement_256_%A_%a.err
 
 #-----------------Toolchain---------------------------
 # ----------------Modulos-----------------------------

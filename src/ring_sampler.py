@@ -3,20 +3,22 @@ import pandas as pd
 import json
 import sys
 
-from Evolve import evolve
-from data_structure import ConfigType, Rule, State
-from metric import Metric
-from utils import createConfig, cycle_length
+from modules.Evolve import evolve
+from modules.data_structure import ConfigType, Rule, State
+from modules.metric import Metric
+from modules.utils import createConfig, cycle_length
 
-# values = json.load(sys.stdin.read(n=1))
-# arg = sys.argv
-# n = int(arg[1])
+arg = sys.argv
+n = int(arg[1])
+stab_range= arg[2]
+
 # steps = int(arg[2])
-n = 256
+#n = 256
 steps = 3000
-seed = 654798203
+#seed = 654798203
+seed= 123456
 #seed = None
-stab_range = 'var'
+#stab_range = 'fixed'
 size = n
 c_type = ConfigType.Ring
 p_state = 0.5

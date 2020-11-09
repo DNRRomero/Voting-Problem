@@ -9,8 +9,8 @@
 #SBATCH --mail-user=dramirez@dim.uchile.cl
 #SBATCH --mail-type=ALL
 #SBATCH --array=1-400%88
-#SBATCH -o ../data/Guacolda/out/Torus_agreement_256_%A_%a.out
-#SBATCH -e ../data/Guacolda/err/Torus_agreement_256_%A_%a.err
+#SBATCH -o ../data/Guacolda/out/Torus_agreement_20_%A_%a.out
+#SBATCH -e ../data/Guacolda/err/Torus_agreement_20_%A_%a.err
 
 #-----------------Toolchain---------------------------
 # ----------------Modulos-----------------------------

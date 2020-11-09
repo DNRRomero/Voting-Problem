@@ -3,10 +3,10 @@ import pandas as pd
 import json
 import sys
 
-from Evolve import evolve
-from data_structure import ConfigType, Rule, State
-from metric import Metric
-from utils import createConfig, cycle_length
+from modules.Evolve import evolve
+from modules.data_structure import ConfigType, Rule, State
+from modules.metric import Metric
+from modules.utils import createConfig, cycle_length
 
 # values = json.load(sys.stdin.read(n=1))
 # arg = sys.argv
@@ -14,9 +14,10 @@ from utils import createConfig, cycle_length
 # steps = int(arg[2])
 n = 16
 steps = 3000
-seed = 654798203
+#seed = 654798203
+seed= 123456
 # seed = None
-stab_range = 'fixed'
+stab_range = 'var'
 size = n**2
 c_type = ConfigType.Torus
 p_state = 0.5

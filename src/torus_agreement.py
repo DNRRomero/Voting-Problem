@@ -6,12 +6,12 @@ from modules.metric import Metric, magnetization
 from modules.utils import createConfig, cycle_length
 from modules.Evolve import evolve
 
-n = 16
+n = 20
 c_type = ConfigType.Torus
 size = n**2
 p_state = 0.5
 seed = 654798203
-steps = 3000
+steps = 3500
 np.random.seed(seed)
 pi = np.random.permutation(size)
 metricList = [Metric.SpinGlass, Metric.Magnetization]

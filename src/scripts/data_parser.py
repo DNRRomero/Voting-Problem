@@ -10,7 +10,7 @@ job_num = args[2]
 source = '../../data/Guacolda/out/*_{0}_*.out'.format(job_num)
 file_list = glob.glob(source)
 
-
+print('There are {0} files to be merged'.format(len(file_list)))
 aux = file_list[0].rsplit('_', maxsplit=2)[0].rsplit('/', maxsplit=1)[1]
 
 title = '{0}.csv'.format(aux)

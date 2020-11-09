@@ -1,17 +1,24 @@
 import numpy as np
 import pandas as pd
+import sys
 
 from modules.data_structure import State, Rule, ConfigType
 from modules.metric import Metric, magnetization
 from modules.utils import createConfig, cycle_length
 from modules.Evolve import evolve
 
-n = 20
+arg = sys.argv
+n = int(arg[1])
+seed = int(arg[2])
+steps = int(arg[3])
+
+if seed == -1:
+    seed = None
+
 c_type = ConfigType.Torus
 size = n**2
 p_state = 0.5
-seed = 654798203
-steps = 3500
+
 np.random.seed(seed)
 pi = np.random.permutation(size)
 metricList = [Metric.SpinGlass, Metric.Magnetization]

@@ -9,15 +9,14 @@ from modules.metric import Metric
 from modules.utils import createConfig, cycle_length
 
 # values = json.load(sys.stdin.read(n=1))
-# arg = sys.argv
-# n = int(arg[1])
-# steps = int(arg[2])
-n = 16
-steps = 3000
-#seed = 654798203
-seed= 123456
-# seed = None
-stab_range = 'var'
+arg = sys.argv
+n = int(arg[1])
+stab_range = arg[2]
+seed = int(arg[3])
+steps = int(arg[4])
+
+if seed == -1:
+    seed = None
 size = n**2
 c_type = ConfigType.Torus
 p_state = 0.5

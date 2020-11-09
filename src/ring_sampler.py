@@ -11,13 +11,11 @@ from modules.utils import createConfig, cycle_length
 arg = sys.argv
 n = int(arg[1])
 stab_range= arg[2]
+seed = int(arg[3])
+steps = int(arg[4])
 
-# steps = int(arg[2])
-#n = 256
-steps = 3000
-#seed = 654798203
-seed= 123456
-#seed = None
+if seed == -1:
+    seed = None
 #stab_range = 'fixed'
 size = n
 c_type = ConfigType.Ring

@@ -9,9 +9,16 @@ from .utils import setup, createConfig, cycle_length
 from .data_structure import Rule, State, ConfigType, Config
 
 
+def save_fixed_point(config: Config, steps, array, t):
+    name = '{0}_{1}_{2}_fixed_points.txt'.format(config.type.name, str(config.size), str(steps))
+    config_file = open(name, 'ab')
+    config.set_states(array[t])
+    pickle.dump(config.nodes, config_file)
+    config_file.close()
+
+
 def cycleCheck(config: Config, steps, array, t, fixedPoints=False):
     cycle = None
-    name = '{0}_{1}_{2}_fixed_points.txt'.format(config.type.name, str(config.size), str(steps))
     length = 0
     for start in range(t):
         if scp.distance.hamming(array[start], array[t]) == 0:
@@ -19,10 +26,8 @@ def cycleCheck(config: Config, steps, array, t, fixedPoints=False):
             length = t - start
             break
     if length == 1 and fixedPoints:
-        config_file = open(name, 'ab')
-        config.set_states(array[t])
-        pickle.dump(config.nodes, config_file)
-        config_file.close()
+        save_fixed_point(config, steps, array, t)
+
     return cycle, length
 
 
@@ -46,35 +51,29 @@ def sequential_evolve(t, array, steps, perm, rules, config):
     return array
 
 
-def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, sequential: bool = False,
-           light=False, cycleBreak=False, fixedPoints=False):
+def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, light=False,
+                                                        cycleBreak=True, fixedPoints=False):
     if metricList is None:
         metricList = []
     rules, metrics = setup()
     out = {}
-    seq = config.size if sequential else 1
-    size = 2 if light else steps * seq + 1
+    size = 2 if light else steps + 1
     array = np.zeros((size, config.size), dtype=np.int8)
     for index in range(config.size):
         array[0][index] = config.nodes[index].state
     t = 1
     cycle = None
     length = None
-    if sequential and not light:
-        array = sequential_evolve(t, array, steps, perm, rules, config)
-    elif light:
+    if light:
         array = light_evolve(t, array, steps, perm, rules, config)
-
-    else:  # Not sequential nor light
-        while t <= steps:
+    else:  # regular
+        while t <= steps and cycle is None:
             array[t] = array[t - 1]
             for index in perm:
                 state = rules[config.nodes[index].rule](t, array, config, index)
                 array[t][index] = state
             if cycleBreak:
                 cycle, length = cycleCheck(config, steps, array, t, fixedPoints=fixedPoints)
-            if cycle is not None:
-                break
             t += 1
 
     for metric in metricList:
@@ -87,10 +86,10 @@ def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, sequent
     return array, out
 
 
-def multi_evolve(configs: List[Config], perm: np.ndarray, steps=100, metricList=None, sequential: bool = False):
+def multi_evolve(configs: List[Config], perm: np.ndarray, steps=100, metricList=None):
     out = {}
     for config in configs:
-        _, metrics = evolve(config, perm, steps, metricList, sequential, light=False)
+        _, metrics = evolve(config, perm, steps, metricList, light=False)
         for metric in metrics:
             if metric in out:
                 out[metric].append(metrics[metric])

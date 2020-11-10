@@ -1,32 +1,36 @@
 import numpy as np
 import pandas as pd
-import sys
-
+import argparse
 from modules.data_structure import State, Rule, ConfigType
 from modules.metric import Metric, magnetization
 from modules.utils import createConfig, cycle_length
 from modules.Evolve import evolve
 
-arg = sys.argv
-n = int(arg[1])
-seed = int(arg[2])
-steps = int(arg[3])
 
-if seed == -1:
+dpn = 'Samples random Torus configuration, keeping track of consensus and energy when randomly unstability'
+parser = argparse.ArgumentParser(description=dpn)
+parser.add_argument('n', type=int, help='Length of side of Torus')
+parser.add_argument('seed', type=int, help='Seed for choosing permutation. If seed=-1, canon permutation')
+parser.add_argument('steps', type=int, help='Number of steps to simulate')
+
+args = parser.parse_args()
+
+
+if args.seed == -1:
     seed = None
 
 c_type = ConfigType.Torus
-size = n**2
+size = args.n**2
 p_state = 0.5
 
-np.random.seed(seed)
+np.random.seed(args.seed)
 pi = np.random.permutation(size)
 metricList = [Metric.SpinGlass, Metric.Magnetization]
 magnetList = [0, 0.2, 0.4, 0.6, 0.8]
 
 agree = {'init_magnet': [], 'length': [], 'Magnetization_mean': [], 'Magnetization_min': [], 'Magnetization_max': [],
          'Magnetization_std': [], 'SpinGlass': [], 'unstables': []}
-conf = createConfig(ConfigType.Torus, n=n)
+conf = createConfig(ConfigType.Torus, n=args.n)
 
 for i, mag in enumerate(magnetList):
     init_states = [State.ON] * round((size * (0.5 + mag / 2)) - 10 ** (-9)) + [State.OFF] * round(
@@ -40,7 +44,7 @@ for i, mag in enumerate(magnetList):
     curr_magnet = mag
     stables = [0]
     while curr_magnet < 1 and stables != []:
-        array, out = evolve(conf, perm=pi, steps=steps,
+        array, out = evolve(conf, perm=pi, steps=args.steps,
                             metricList=metricList, cycleBreak=True)
         curr_energy = out[Metric.SpinGlass][-1]
         curr_magnet = out[Metric.Magnetization][-1]

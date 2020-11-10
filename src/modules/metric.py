@@ -12,15 +12,19 @@ def density(array: np.ndarray, config: Config, single=0):
 
 
 def spinGlass(array: np.ndarray, config: Config, single=0):
-    steps, size = array.shape
-    # b = np.array([node.degree / 2 + (0.5 if node.rule == Rule.STABLE else 0) for node in config.nodes])
     energy = lambda x: -0.5 * (x.dot(config.adj.dot(x)))
+    if single:
+        return energy(array) / config.edges
+    steps, _ = array.shape
     return [(energy(array[i])) / config.edges for i in range(steps)]
 
 
 def magnetization(array: np.ndarray, config: Config = None, single=0):
+    consensus = lambda x: np.abs(x.sum())
+    if single:
+        return consensus(array)/config.size
     steps, size = array.shape
-    return [np.abs(array[i].sum()) / size for i in range(steps)]
+    return [consensus(array[i]) / size for i in range(steps)]
 
 
 def hamming(array: np.ndarray, config: Config, single=0):

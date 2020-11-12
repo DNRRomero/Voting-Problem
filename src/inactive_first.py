@@ -3,7 +3,7 @@ import pandas as pd
 import argparse
 
 from modules.data_structure import ConfigType, State
-from modules.utils import createConfig, states_per_magnet, cycle_length
+from modules.utils import create_config, states_per_magnet, cycle_length
 from modules.Evolve import cycleCheck, setup, evolve
 from modules.metric import Metric
 
@@ -15,21 +15,20 @@ parser.add_argument('steps', type=int, help='Number of steps to simulate')
 
 args = parser.parse_args()
 
-
 size = args.n ** 2
 c_type = ConfigType.Torus
-config = createConfig(configType=c_type, n=args.n)
+config = create_config(configType=c_type, n=args.n)
 magnetList = [0.0]
 pi = np.random.permutation(size)
 
 rules, metrics = setup()
-out = {'init_magnet': [], 'Energy' : [], 'Consensus': [], 'order': [], 'length': []}
+out = {'init_magnet': [], 'Energy': [], 'Consensus': [], 'order': [], 'length': []}
 metricList = [Metric.SpinGlass, Metric.Magnetization]
 
 for mag in magnetList:
     init_states = states_per_magnet(size, mag, State.OFF)
     config.set_states(init_states)
-    array = np.zeros((args.steps+1, config.size), dtype=np.int8)
+    array = np.zeros((args.steps + 1, config.size), dtype=np.int8)
     for index in range(config.size):
         array[0][index] = config.nodes[index].state
     t = 1
@@ -61,14 +60,13 @@ for mag in magnetList:
     out['init_magnet'].append(mag)
 
     # Now random order
-    evol, vals = evolve(config=config, steps=args.steps, perm=pi, metricList= metricList, cycleBreak=True)
+    evol, vals = evolve(config=config, steps=args.steps, perm=pi, metricList=metricList, cycleBreak=True)
     length, start = cycle_length(evol)
     out['length'].append(length)
     out['Energy'].append(vals[Metric.SpinGlass][-1])
     out['Consensus'].append(vals[Metric.Magnetization][-1])
     out['order'].append('random')
     out['init_magnet'].append(mag)
-
 
 df = pd.DataFrame(out)
 csv = df.to_csv(encoding='utf-8', index=False)

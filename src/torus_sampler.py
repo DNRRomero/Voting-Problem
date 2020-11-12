@@ -6,7 +6,7 @@ import argparse
 from modules.Evolve import evolve
 from modules.data_structure import ConfigType, Rule, State
 from modules.metric import Metric
-from modules.utils import createConfig, cycle_length
+from modules.utils import create_config, cycle_length
 
 dpn = 'Samples random Torus configuration, keeping track of limit cycle information'
 parser = argparse.ArgumentParser(description=dpn)
@@ -47,7 +47,7 @@ c_len = 'length'
 data = {c_len: [], state: []}
 for metric in metricList:
     data[metric.name] = []
-conf = createConfig(c_type, n=args.n)
+conf = create_config(c_type, n=args.n)
 
 states = np.random.choice(a=[State.ON, State.OFF], size=size, p=[p_state, 1 - p_state])
 conf.set_states(states)

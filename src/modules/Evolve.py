@@ -5,7 +5,7 @@ import pickle
 import itertools
 import pandas as pd
 
-from .utils import setup, createConfig, cycle_length
+from .utils import setup, create_config, cycle_length
 from .data_structure import Rule, State, ConfigType, Config
 
 
@@ -110,7 +110,7 @@ def config_sampler(configType: ConfigType, n, steps, perm, rules, metricList, sa
     data = {'length': np.zeros(cases), state: np.zeros(cases, dtype='<U20')}
     for metric in metricList:
         data[metric.name] = np.zeros(samples * len(p_actions))
-    conf = createConfig(configType, n=n, **kwargs)
+    conf = create_config(configType, n=n, **kwargs)
     for j in range(samples):
         if j % 100 == 0:
             print(j)
@@ -143,7 +143,7 @@ def evolve_all_configs(n, steps: int, samples: int, perm, p_actions: List[float]
     rules = [np.random.choice(a=[Rule.STABLE, Rule.UNSTABLE], size=size, p=[p, 1 - p]) for p in p_actions]
     for i, p in enumerate(p_actions):
         print(i)
-        conf = createConfig(configType, n=n, rules=rules[i], **kwargs)
+        conf = create_config(configType, n=n, rules=rules[i], **kwargs)
         for j, s in enumerate(itertools.product([State.ON, State.OFF], repeat=size)):
             conf.set_states(list(s))
             evol, metrics = evolve(config=conf, perm=perm, steps=steps, metricList=metricList, cycleBreak=True,

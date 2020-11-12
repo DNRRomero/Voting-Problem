@@ -3,7 +3,7 @@ import pandas as pd
 import argparse
 
 from modules.data_structure import ConfigType
-from modules.utils import createConfig, states_per_magnet, cycle_length, rules_per_factor
+from modules.utils import create_config, states_per_magnet, cycle_length, rules_per_factor
 from modules.Evolve import evolve, setup
 from modules.metric import Metric
 
@@ -17,13 +17,13 @@ args = parser.parse_args()
 
 size = args.n ** 2
 c_type = ConfigType.Torus
-config = createConfig(configType=c_type, n=args.n)
+config = create_config(configType=c_type, n=args.n)
 np.random.seed(args.seed)
 pi = np.random.permutation(size)
-stableList = [0.2*i for i in range(6)]+[0.5]
+stableList = [0.2 * i for i in range(6)] + [0.5]
 
 rules, metrics = setup()
-out = {'stability': [], 'step': [], 'length': [], 'cycle_start': [], 'Energy': [], 'Consensus':[]}
+out = {'stability': [], 'step': [], 'length': [], 'cycle_start': [], 'Energy': [], 'Consensus': []}
 metricList = [Metric.SpinGlass, Metric.Magnetization]
 
 for stab in stableList:
@@ -32,7 +32,8 @@ for stab in stableList:
     config.set_states(init_states).set_rules(init_rules)
     evol, result = evolve(config=config, perm=pi, steps=args.steps, metricList=metricList, cycleBreak=True)
     length, start = cycle_length(evol)
-    for i in range(start + length):
+    end = evol.shape[0] if length == args.steps + 2 else start + length
+    for i in range(end):
         out['stability'].append(stab)
         out['cycle_start'].append(start)
         out['length'].append(length)

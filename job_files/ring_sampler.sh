@@ -8,13 +8,13 @@
 #SBATCH --mail-user=dramirez@dim.uchile.cl
 #SBATCH --mail-type=ALL
 #SBATCH --array=1-400%88
-#SBATCH -o ../data/Guacolda/out/Ring_sampler_256_var_rand_2_%A_%a.out
-#SBATCH -e ../data/Guacolda/err/Ring_sampler_256_var_rand_2_%A_%a.err
+#SBATCH -o ../data/Guacolda/out/Ring_sampler_256_fixed_rand_2_%A_%a.out
+#SBATCH -e ../data/Guacolda/err/Ring_sampler_256_fixed_rand_2_%A_%a.err
 
 #-----------------Toolchain---------------------------
 # ----------------Modulos-----------------------------
 module purge
 ml  Anaconda3/2020.02  
 # ----------------Comandos--------------------------
-python ../src/ring_sampler.py 256 var
+python ../src/ring_sampler.py 256 fixed 123456 3000
  

@@ -32,7 +32,8 @@ for stab in stableList:
     config.set_states(init_states).set_rules(init_rules)
     evol, result = evolve(config=config, perm=pi, steps=args.steps, metricList=metricList, cycleBreak=True)
     length, start = cycle_length(evol)
-    for i in range(start + length):
+    end = evol.shape[0] if length == args.steps + 2 else start + length
+    for i in range(end):
         out['stability'].append(stab)
         out['cycle_start'].append(start)
         out['length'].append(length)

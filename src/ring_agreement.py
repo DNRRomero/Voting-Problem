@@ -7,7 +7,7 @@ from modules.metric import Metric, magnetization
 from modules.utils import createConfig, cycle_length
 from modules.Evolve import evolve
 
-dpn = 'Samples random Ring configuration, keeping track of consensus and energy when randomly unstability'
+dpn = 'Samples random Ring configuration, keeping track of consensus and energy when randomly adding unstability'
 parser = argparse.ArgumentParser(description=dpn)
 parser.add_argument('n', type=int, help='Length of Ring')
 parser.add_argument('seed', type=int, help='Seed for choosing permutation. If seed=-1, canon permutation')

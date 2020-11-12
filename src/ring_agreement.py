@@ -4,7 +4,7 @@ import argparse
 
 from modules.data_structure import State, Rule, ConfigType
 from modules.metric import Metric, magnetization
-from modules.utils import createConfig, cycle_length
+from modules.utils import create_config, cycle_length
 from modules.Evolve import evolve
 
 dpn = 'Samples random Ring configuration, keeping track of consensus and energy when randomly adding unstability'
@@ -29,7 +29,7 @@ magnetList = [0, 0.2, 0.4, 0.6, 0.8]
 
 agree = {'init_magnet': [], 'length': [], 'Magnetization_mean': [], 'Magnetization_min': [], 'Magnetization_max': [],
          'Magnetization_std': [], 'SpinGlass': [], 'unstables': []}
-conf = createConfig(ConfigType.Ring, n=args.n)
+conf = create_config(ConfigType.Ring, n=args.n)
 
 for i, mag in enumerate(magnetList):
     init_states = [State.ON] * round((size * (0.5 + mag / 2)) - 10 ** (-9)) + [State.OFF] * round(

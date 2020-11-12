@@ -36,7 +36,7 @@ def avg_cycle_length(array: np.ndarray, start, length):
     return np.array(magnetization(array[start: start + length])).mean()
 
 
-def createConfig(configType: ConfigType, **kwargs):
+def create_config(configType: ConfigType, **kwargs):
     switcher = {
         ConfigType.Ring:
             Ring.createRing,

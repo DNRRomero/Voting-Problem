@@ -24,11 +24,13 @@ p_state = 0.5
 p_actions = None
 labels = None
 if args.stab_range == 'var':
-    p_actions = [0, 1 / np.power(size, 2), 1 / np.power(size, 1.5), 1 / size, 1 / np.sqrt(size),
-                 1 / np.power(size, 1 / 3),
-                 1 / np.power(np.log2(size), 2), 1 / np.log2(size)]
-    labels = [r'$0$', r'$1/n^2$', r'$1/n^{3/2}$', r'$1/n$', r'$1/\sqrt{n}$', r'$1/{n^{1/3}}$',
-              r'$1/\log^{2}(n)$', r'$1/\log(n)$']
+    # p_actions = [0, 1 / np.power(size, 2), 1 / np.power(size, 1.5), 1 / size, 1 / np.sqrt(size), 1 / np.power(size,
+    # 1 / 3), 1 / np.power(np.log2(size), 2), 1 / np.log2(size)] labels = [r'$0$', r'$1/n^2$', r'$1/n^{3/2}$',
+    # r'$1/n$', r'$1/\sqrt{n}$', r'$1/{n^{1/3}}$', r'$1/\log^{2}(n)$', r'$1/\log(n)$']
+    p_actions = [1 / np.sqrt(size), 1 / np.power(size, 1 / 3), 1 / np.power(np.log2(size), 2),
+                 1 / np.log2(size), 1 / np.sqrt(np.log2(size)), 1 / np.power(np.log2(size), 1 / 3)]
+    labels = [r'$1/\sqrt{n}$', r'$1/n^{1/3}$', r'$1/\log^2 n$', r'$1/\log n$',
+              r'$1/\sqrt{\log n}$', r'$1/\log^{1/3}n$']
 else:
     p_actions = [0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1]
     labels = ['${0}$'.format(i) for i in p_actions]

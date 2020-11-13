@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt, animation as animation
+from .data_structure import Config, ConfigType
 import seaborn as sns
 
 
@@ -25,9 +26,40 @@ def plot_grid(evolution, shape=None, sl=-1, title='', colormap='Greys', vmin=Non
 
     plt.show()
 
-    def plot_config():
 
-        return None
+def plot_config(config: Config, which='both'):
+    rules = np.array(config.get_rules())
+    states = np.array(config.get_states())
+
+    if config.type == ConfigType.Torus:
+        side = int(np.sqrt(config.size))
+        rules = rules.reshape((side, side))
+        states = states.reshape((side, side))
+    option = rules if which == 'rule' else states
+
+    cmap = plt.get_cmap('Greys')
+    if which == 'both':
+        fig, axs = plt.subplots(1,2)
+        ax_r, ax_s = axs
+        ax_r.set_title('Node rule visualization')
+        ax_s.set_title('Node state visualization')
+        im = ax_r.imshow(rules, cmap=cmap)
+        im = ax_s.imshow(states, cmap=cmap)
+        ax_r.set_yticks([])
+        ax_s.set_yticks([])
+        ax_r.set_xticks([])
+        ax_s.set_xticks([])
+
+    elif which == 'rule' or which == 'state':
+        fig, ax = plt.subplots()
+        title = 'Node {0} visualization'.format(which)
+        ax.set_title(title)
+        im = ax.imshow(option, cmap=cmap)
+        ax.set_yticks([])
+        ax.set_xticks([])
+
+    else:
+        assert False
 
 
 def animate(activities, title='', shape=None, save=False, interval=500, colormap='Greys', vmin=None, vmax=None,

@@ -14,7 +14,7 @@ class State(IntEnum):
     OFF = -1
 
 
-class Rule(Enum):
+class Rule(IntEnum):
     STABLE = 0
     UNSTABLE = 1
     ONE_BIASED = 2
@@ -104,3 +104,9 @@ class Config(object):
         for i in range(self.size):
             self.nodes[i].rule = rules[i]
         return self
+
+    def get_states(self):
+        return [node.state for node in self.nodes]
+
+    def get_rules(self):
+        return [node.rule for node in self.nodes]

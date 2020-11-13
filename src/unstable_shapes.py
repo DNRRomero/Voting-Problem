@@ -7,12 +7,14 @@ from .modules.utils import create_config, states_per_magnet, cycle_length
 from .modules.Evolve import evolve
 
 
-def chess_config(n, param):
+def chess_config(n, width):
+    assert width > 0
     c_type = ConfigType.Torus
     size = n ** 2
-    rule_set = lambda x, y: (x + y) % 2
+    # rule_set = lambda x, y: (x + y) % 2
+    rule_set = lambda x,y: (((x//width)%2 ) + ((y//width) %2)) %2
     pair = lambda k: (k // n, k % n)
-    assign = lambda i: Rule.STABLE if i == 1 else Rule.UNSTABLE
+    assign = lambda i: Rule.STABLE if i == 0 else Rule.UNSTABLE
     rules = [assign(rule_set(pair(i)[0], pair(i)[1])) for i in range(size)]
 
     return create_config(c_type, n=n, m=n, rules=rules)
@@ -56,7 +58,7 @@ def strands_config(n, n_strands):
 def checked_config(n, check_size):
     c_type = ConfigType.Torus
     size = n ** 2
-    rule_set = lambda x, y: 1 if (x % check_size+1 != 0 or y % check_size+1 != 0) else -1
+    rule_set = lambda x, y: -1 if (x % (check_size+1) == 0 or y % (check_size+1) == 0) else 1
     pair = lambda k: (k // n, k % n)
     assign = lambda i: Rule.STABLE if i == 1 else Rule.UNSTABLE
     rules = [assign(rule_set(pair(i)[0], pair(i)[1])) for i in range(size)]

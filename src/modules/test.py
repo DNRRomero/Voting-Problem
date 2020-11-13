@@ -60,7 +60,7 @@ def blocks():
     ring.set_states(states)
     ring.set_rules(rules)
 
-    evol, metrics = Evolve.evolve(ring, pi, 90, metricList=[Metric.Density, Metric.SpinGlass], sequential=False)
+    evol, metrics = Evolve.evolve(ring, pi, 90, metricList=[Metric.Density, Metric.Energy], sequential=False)
 
     Plotter.plot_metrics(metrics)
 

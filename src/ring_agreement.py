@@ -3,7 +3,7 @@ import pandas as pd
 import argparse
 
 from modules.data_structure import State, Rule, ConfigType
-from modules.metric import Metric, magnetization
+from modules.metric import Metric, consensus
 from modules.utils import create_config, cycle_length
 from modules.Evolve import evolve
 
@@ -24,7 +24,7 @@ p_state = 0.5
 
 np.random.seed(args.seed)
 pi = np.random.permutation(args.n)
-metricList = [Metric.SpinGlass, Metric.Magnetization]
+metricList = [Metric.Energy, Metric.Consensus]
 magnetList = [0, 0.2, 0.4, 0.6, 0.8]
 
 agree = {'init_magnet': [], 'length': [], 'Magnetization_mean': [], 'Magnetization_min': [], 'Magnetization_max': [],
@@ -45,17 +45,17 @@ for i, mag in enumerate(magnetList):
     while curr_magnet < 1 and stables != []:
         array, out = evolve(conf, perm=pi, steps=args.steps,
                             metricList=metricList, cycleBreak=True)
-        curr_energy = out[Metric.SpinGlass][-1]
-        curr_magnet = out[Metric.Magnetization][-1]
+        curr_energy = out[Metric.Energy][-1]
+        curr_magnet = out[Metric.Consensus][-1]
         length, start = cycle_length(array)
 
         stables = [k for k in range(args.n) if curr_rule[k] == Rule.STABLE]
         agree['init_magnet'].append(mag)
         agree['length'].append(length)
         agree['Magnetization_mean'].append(curr_magnet)
-        agree['Magnetization_std'].append(np.std(magnetization(array[start: start + length])))
-        agree['Magnetization_min'].append(np.min(magnetization(array[start: start + length])))
-        agree['Magnetization_max'].append(np.max(magnetization(array[start: start + length])))
+        agree['Magnetization_std'].append(np.std(consensus(array[start: start + length])))
+        agree['Magnetization_min'].append(np.min(consensus(array[start: start + length])))
+        agree['Magnetization_max'].append(np.max(consensus(array[start: start + length])))
         agree['SpinGlass'].append(curr_energy)
         agree['unstables'].append(args.n - len(stables))
 

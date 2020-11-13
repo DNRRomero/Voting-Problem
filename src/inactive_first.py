@@ -23,7 +23,7 @@ pi = np.random.permutation(size)
 
 rules, metrics = setup()
 out = {'init_magnet': [], 'Energy': [], 'Consensus': [], 'order': [], 'length': []}
-metricList = [Metric.SpinGlass, Metric.Magnetization]
+metricList = [Metric.Energy, Metric.Consensus]
 
 for mag in magnetList:
     init_states = states_per_magnet(size, mag, State.OFF)
@@ -46,15 +46,16 @@ for mag in magnetList:
             state = rules[config.nodes[index].rule](t, array, config, index)
             array[t][index] = state
         cycle, length = cycleCheck(config, args.steps, array, t)
+        t += 1
 
     if cycle is not None:
         # If there is a cycle, copy the average metric value in cycle at the last entry
-        out['Energy'].append(metrics[Metric.SpinGlass](array[cycle], single=1))
-        out['Consensus'].append(np.mean(metrics[Metric.Magnetization](array[cycle: cycle + length])))
+        out['Energy'].append(metrics[Metric.Energy](array[cycle], config, single=1))
+        out['Consensus'].append(np.mean(metrics[Metric.Consensus](array[cycle: cycle + length], config)))
         out['length'].append(length)
     else:
-        out['Energy'].append(metrics[Metric.SpinGlass](array[-1], single=1))
-        out['Consensus'].append(metrics[Metric.Magnetization](array[-1], single=1))
+        out['Energy'].append(metrics[Metric.Energy](array[-1], config, single=1))
+        out['Consensus'].append(metrics[Metric.Consensus](array[-1], config, single=1))
         out['length'].append(args.steps + 2)
     out['order'].append('off_first')
     out['init_magnet'].append(mag)
@@ -63,8 +64,8 @@ for mag in magnetList:
     evol, vals = evolve(config=config, steps=args.steps, perm=pi, metricList=metricList, cycleBreak=True)
     length, start = cycle_length(evol)
     out['length'].append(length)
-    out['Energy'].append(vals[Metric.SpinGlass][-1])
-    out['Consensus'].append(vals[Metric.Magnetization][-1])
+    out['Energy'].append(vals[Metric.Energy][-1])
+    out['Consensus'].append(vals[Metric.Consensus][-1])
     out['order'].append('random')
     out['init_magnet'].append(mag)
 

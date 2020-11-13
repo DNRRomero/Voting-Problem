@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.random import default_rng
 import pandas as pd
 import argparse
 
@@ -24,7 +25,7 @@ stableList = [0.2 * i for i in range(6)] + [0.5]
 
 rules, metrics = setup()
 out = {'stability': [], 'step': [], 'length': [], 'cycle_start': [], 'Energy': [], 'Consensus': []}
-metricList = [Metric.SpinGlass, Metric.Magnetization]
+metricList = [Metric.Energy, Metric.Consensus]
 
 for stab in stableList:
     init_states = states_per_magnet(size, 0.0)
@@ -38,8 +39,8 @@ for stab in stableList:
         out['cycle_start'].append(start)
         out['length'].append(length)
         out['step'].append(i)
-        out['Energy'].append(result[Metric.SpinGlass][i])
-        out['Consensus'].append(result[Metric.Magnetization][i])
+        out['Energy'].append(result[Metric.Energy][i])
+        out['Consensus'].append(result[Metric.Consensus][i])
 
 df = pd.DataFrame(out)
 csv = df.to_csv(encoding='utf-8', index=False)

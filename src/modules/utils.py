@@ -4,7 +4,7 @@ import scipy.spatial as scp
 from . import Ring
 from . import Torus
 from .data_structure import ConfigType, State, Rule
-from .metric import magnetization, getMetrics
+from .metric import consensus, getMetrics
 from .rules import getRules
 
 
@@ -33,7 +33,7 @@ def cycle_length(array: np.ndarray):
 
 
 def avg_cycle_length(array: np.ndarray, start, length):
-    return np.array(magnetization(array[start: start + length])).mean()
+    return np.array(consensus(array[start: start + length])).mean()
 
 
 def create_config(configType: ConfigType, **kwargs):

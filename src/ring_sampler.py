@@ -36,7 +36,7 @@ if args.seed != -1:
     np.random.seed(args.seed)
 pi = np.random.permutation(args.n) if args.seed != -1 else np.array([i for i in range(args.n)])
 
-metricList = [Metric.SpinGlass, Metric.Magnetization]
+metricList = [Metric.Energy, Metric.Consensus]
 np.random.seed()
 rules = [[np.random.choice(a=[Rule.STABLE, Rule.UNSTABLE], p=[p, 1 - p]) for i in range(args.n)] for p in p_actions]
 

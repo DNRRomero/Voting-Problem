@@ -11,20 +11,20 @@ def density(array: np.ndarray, config: Config, single=0):
     return [dens(array, i) for i in range(steps)]
 
 
-def spinGlass(array: np.ndarray, config: Config, single=0):
-    energy = lambda x: -0.5 * (x.dot(config.adj.dot(x)))
+def energy(array: np.ndarray, config: Config, single=0):
+    e = lambda x: -0.5 * (x.dot(config.adj.dot(x)))
     if single:
-        return energy(array) / config.edges
+        return e(array) / config.edges
     steps, _ = array.shape
-    return [(energy(array[i])) / config.edges for i in range(steps)]
+    return [(e(array[i])) / config.edges for i in range(steps)]
 
 
-def magnetization(array: np.ndarray, config: Config = None, single=0):
-    consensus = lambda x: np.abs(x.sum())
+def consensus(array: np.ndarray, config: Config = None, single=0):
+    c = lambda x: np.abs(x.sum())
     if single:
-        return consensus(array)/config.size
+        return c(array)/config.size
     steps, size = array.shape
-    return [consensus(array[i]) / size for i in range(steps)]
+    return [c(array[i]) / size for i in range(steps)]
 
 
 def hamming(array: np.ndarray, config: Config, single=0):
@@ -35,12 +35,12 @@ def hamming(array: np.ndarray, config: Config, single=0):
 
 class Metric(Enum):
     Density = 1
-    SpinGlass = 2
+    Energy = 2
     Hamming = 3
-    Magnetization = 4
+    Consensus = 4
 
 
 def getMetrics():
-    metrics = {Metric.Density: density, Metric.SpinGlass: spinGlass,
-               Metric.Hamming: hamming, Metric.Magnetization: magnetization}
+    metrics = {Metric.Density: density, Metric.Energy: energy,
+               Metric.Hamming: hamming, Metric.Consensus: consensus}
     return metrics

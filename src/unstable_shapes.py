@@ -74,7 +74,7 @@ def unstable_shape_sample(args):
     np.random.seed(args.seed)
     pi = np.random.permutation(size)
     magnetList = [2*i/10 for i in range(6)] +[0.5]
-    metricList = [Metric.SpinGlass, Metric.Magnetization]
+    metricList = [Metric.Energy, Metric.Consensus]
     out = {'length': [], 'init_magnet': [], 'Energy': [], 'Consensus': []}
     for mag in magnetList:
         states = states_per_magnet(size, mag)
@@ -83,8 +83,8 @@ def unstable_shape_sample(args):
         length, _ = cycle_length(evol)
         out['length'].append(length)
         out['init_magnet'].append(mag)
-        out['Energy'].append(metrics[Metric.SpinGlass][-1])
-        out['Consensus'].append(metrics[Metric.Magnetization][-1])
+        out['Energy'].append(metrics[Metric.Energy][-1])
+        out['Consensus'].append(metrics[Metric.Consensus][-1])
     df = pd.DataFrame(out)
     csv = df.to_csv(encoding='utf-8', index=False)
     print(csv)

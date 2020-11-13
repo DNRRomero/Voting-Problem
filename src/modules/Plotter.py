@@ -62,6 +62,37 @@ def plot_config(config: Config, which='both'):
         assert False
 
 
+def plot_config_sns(config: Config, which='both'):
+    rules = np.array(config.get_rules())
+    states = np.array(config.get_states())
+
+    if config.type == ConfigType.Torus:
+        side = int(np.sqrt(config.size))
+        rules = rules.reshape((side, side))
+        states = states.reshape((side, side))
+    option = rules if which == 'rule' else states
+
+    cmap = plt.get_cmap('Greys')
+    if which == 'both':
+        fig, axs = plt.subplots(1,2)
+        ax_r, ax_s = axs
+        ax_r.set_title('Node rule visualization')
+        ax_s.set_title('Node state visualization')
+        sns.heatmap(rules, ax=ax_r, xticklabels=False, yticklabels=False, cbar=False, square=True)
+        sns.heatmap(states, ax=ax_s, xticklabels=False, yticklabels=False, cbar=False, square=True)
+
+    elif which == 'rule' or which == 'state':
+        fig, ax = plt.subplots()
+        title = 'Node {0} visualization'.format(which)
+        ax.set_title(title)
+        im = ax.imshow(option, cmap=cmap)
+        ax.set_yticks([])
+        ax.set_xticks([])
+
+    else:
+        assert False
+
+
 def animate(activities, title='', shape=None, save=False, interval=500, colormap='Greys', vmin=None, vmax=None,
             name='evolved'):
     if shape is not None:

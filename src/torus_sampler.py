@@ -39,7 +39,7 @@ pi = np.random.permutation(size) if args.seed is not None else np.array([i for i
 
 np.random.seed()
 
-metricList = [Metric.SpinGlass, Metric.Magnetization]
+metricList = [Metric.Energy, Metric.Consensus]
 rules = [[np.random.choice(a=[Rule.STABLE, Rule.UNSTABLE], p=[p, 1 - p]) for i in range(size)] for p in p_actions]
 
 state = '$p_{stable}$'

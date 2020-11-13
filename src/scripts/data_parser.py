@@ -24,7 +24,7 @@ title = '{0}.csv'.format(aux)
 if args.serial:
     df_list = []
     for i, file in enumerate(out_list):
-        njob = file.rsplit('_', maxsplit=1)[1]
+        njob = file.rsplit('_', maxsplit=1)[1].rsplit('.', maxsplit=1)[0]
         serial = args.job_num + njob
         table = pd.read_table(file, sep=',')
         nrows = len(table.index)

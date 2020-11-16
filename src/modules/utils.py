@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.spatial as scp
+from numpy.random import default_rng
 
 from . import Ring
 from . import Torus
@@ -54,17 +55,18 @@ def setup():
 
 
 def states_per_magnet(size, mag, pref=State.ON):
+    rng = default_rng()
     d = 1 if pref == State.ON else -1
-    states = [State.ON] * round((size * (0.5 + d*mag / 2)) - 10 ** (-9)) + [State.OFF] * round(
-        (size * (0.5 - d*mag / 2) + 10 ** (-9)))
-    np.random.seed()
-    np.random.shuffle(states)
+    states = [State.ON] * round((size * (0.5 + d * mag / 2)) - 10 ** (-9)) + [State.OFF] * round(
+        (size * (0.5 - d * mag / 2) + 10 ** (-9)))
+    rng.shuffle(states)
     return states
 
-def rules_per_factor(size, fct, pref= Rule.STABLE):
+
+def rules_per_factor(size, fct, pref=Rule.STABLE):
+    rng = default_rng()
     d = 1 if pref == Rule.STABLE else -1
-    rules = [Rule.STABLE] * round((size * (0.5 + d*fct / 2)) - 10 ** (-9)) + [Rule.UNSTABLE] * round(
-        (size * (0.5 - d*fct / 2) + 10 ** (-9)))
-    np.random.seed()
-    np.random.shuffle(rules)
+    rules = [Rule.STABLE] * round((size * (0.5 + d * fct / 2)) - 10 ** (-9)) + [Rule.UNSTABLE] * round(
+        (size * (0.5 - d * fct / 2) + 10 ** (-9)))
+    rng.shuffle(rules)
     return rules

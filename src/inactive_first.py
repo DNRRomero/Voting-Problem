@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import argparse
+from numpy.random import default_rng
 
 from modules.data_structure import ConfigType, State
 from modules.utils import create_config, states_per_magnet, cycle_length
@@ -22,9 +23,9 @@ magnetList = [0.0]
 pi = np.random.permutation(size)
 
 rules, metrics = setup()
-out = {'init_magnet': [], 'Energy': [], 'Consensus': [], 'order': [], 'length': []}
+out = {'init_magnet': [], 'Energy': [], 'Consensus': [], 'order': []}
 metricList = [Metric.Energy, Metric.Consensus]
-
+rng = default_rng()
 for mag in magnetList:
     init_states = states_per_magnet(size, mag, State.OFF)
     config.set_states(init_states)
@@ -33,37 +34,39 @@ for mag in magnetList:
         array[0][index] = config.nodes[index].state
     t = 1
     cycle, length = None, None
+    magn = 0
 
-    while t <= args.steps and cycle is None:
+    while t <= args.steps and magn != 1:
         array[t] = array[t - 1]
         inactive = np.array([i for i in range(config.size) if array[t][i] == State.OFF])
         active = np.array([i for i in range(config.size) if array[t][i] == State.ON])
-        np.random.seed()
-        np.random.shuffle(inactive)
-        np.random.shuffle(active)
+        rng.shuffle(inactive)
+        rng.shuffle(active)
         both = np.concatenate((inactive, active))
         for index in both:
             state = rules[config.nodes[index].rule](t, array, config, index)
             array[t][index] = state
-        cycle, length = cycleCheck(config, args.steps, array, t)
+        # cycle, length = cycleCheck(config, args.steps, array, t)
         t += 1
 
     if cycle is not None:
         # If there is a cycle, copy the average metric value in cycle at the last entry
         out['Energy'].append(metrics[Metric.Energy](array[cycle], config, single=1))
         out['Consensus'].append(np.mean(metrics[Metric.Consensus](array[cycle: cycle + length], config)))
-        out['length'].append(length)
+        # out['length'].append(length)
+        magn = out['Consensus']
     else:
         out['Energy'].append(metrics[Metric.Energy](array[-1], config, single=1))
         out['Consensus'].append(metrics[Metric.Consensus](array[-1], config, single=1))
-        out['length'].append(args.steps + 2)
+        # out['length'].append(args.steps + 2)
+        magn = out['Consensus']
     out['order'].append('off_first')
     out['init_magnet'].append(mag)
 
     # Now random order
     evol, vals = evolve(config=config, steps=args.steps, perm=pi, metricList=metricList, cycleBreak=True)
-    length, start = cycle_length(evol)
-    out['length'].append(length)
+    # length, start = cycle_length(evol)
+    # out['length'].append(length)
     out['Energy'].append(vals[Metric.Energy][-1])
     out['Consensus'].append(vals[Metric.Consensus][-1])
     out['order'].append('random')

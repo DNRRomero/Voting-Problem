@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.random import default_rng
 import pandas as pd
 import argparse
 from modules.data_structure import State, Rule, ConfigType
@@ -32,11 +33,12 @@ agree = {'init_magnet': [], 'length': [], 'Magnetization_mean': [], 'Magnetizati
          'Magnetization_std': [], 'SpinGlass': [], 'unstables': []}
 conf = create_config(ConfigType.Torus, n=args.n)
 
+rng = default_rng()
+
 for i, mag in enumerate(magnetList):
     init_states = [State.ON] * round((size * (0.5 + mag / 2)) - 10 ** (-9)) + [State.OFF] * round(
         (size * (0.5 - mag / 2) + 10 ** (-9)))
-    np.random.seed()
-    np.random.shuffle(init_states)
+    rng.shuffle(init_states)
     init_rule = np.array([Rule.STABLE] * size)
     curr_rule = init_rule
     conf.set_rules(init_rule)
@@ -61,7 +63,7 @@ for i, mag in enumerate(magnetList):
         agree['unstables'].append(size - len(stables))
 
         # Choose a random stable node to change rule
-        index = 0 if stables == [] else np.random.choice(stables)
+        index = 0 if stables == [] else rng.choice(stables)
         curr_rule[index] = Rule.UNSTABLE
         conf.set_rules(curr_rule)
 data = pd.DataFrame(agree)

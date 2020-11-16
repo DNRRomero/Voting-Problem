@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-
+from numpy.random import default_rng
 import argparse
 
 from modules.Evolve import evolve
@@ -39,10 +39,10 @@ if args.seed != -1:
     np.random.seed(args.seed)
 pi = np.random.permutation(size) if args.seed is not None else np.array([i for i in range(size)])
 
-np.random.seed()
+rng = default_rng()
 
 metricList = [Metric.Energy, Metric.Consensus]
-rules = [[np.random.choice(a=[Rule.STABLE, Rule.UNSTABLE], p=[p, 1 - p]) for i in range(size)] for p in p_actions]
+rules = [[rng.choice(a=[Rule.STABLE, Rule.UNSTABLE], p=[p, 1 - p]) for i in range(size)] for p in p_actions]
 
 state = '$p_{stable}$'
 c_len = 'length'
@@ -51,7 +51,7 @@ for metric in metricList:
     data[metric.name] = []
 conf = create_config(c_type, n=args.n)
 
-states = np.random.choice(a=[State.ON, State.OFF], size=size, p=[p_state, 1 - p_state])
+states = rng.choice(a=[State.ON, State.OFF], size=size, p=[p_state, 1 - p_state])
 conf.set_states(states)
 for i, p in enumerate(p_actions):
     conf.set_rules(rules[i])

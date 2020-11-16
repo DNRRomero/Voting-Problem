@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 import argparse
-from .modules.data_structure import ConfigType, Rule
-from .modules.metric import Metric
-from .modules.utils import create_config, states_per_magnet, cycle_length
-from .modules.Evolve import evolve
+from modules.data_structure import ConfigType, Rule
+from modules.metric import Metric
+from modules.utils import create_config, states_per_magnet, cycle_length
+from modules.Evolve import evolve
 
 
 def chess_config(n, width):
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     parser.add_argument('scheme', help=scheme_dpn)
     param_dpn = "Accompanying parameter for chosen scheme: \n Chess: ignored \n wall: thickness " \
                 "\n strand: number of strands \n blot: blot width \n check: check size"
-    parser.add_argument('param', help=param_dpn)
+    parser.add_argument('param', type=int, help=param_dpn)
     parser.add_argument('seed', type=int, help='Seed for choosing permutation')
     parser.add_argument('steps', type=int, help='Number of steps to simulate')
 

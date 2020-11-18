@@ -6,9 +6,11 @@ from .data_structure import Config
 
 
 def density(array: np.ndarray, config: Config, single=0):
+    dens = lambda a: (1 + a).sum() / (2 * config.size)
+    if single:
+        return dens(array)
     steps, size = array.shape
-    dens = lambda a, i: (1 + a[i]).sum() / (2 * size)
-    return [dens(array, i) for i in range(steps)]
+    return [dens(array[i]) for i in range(steps)]
 
 
 def energy(array: np.ndarray, config: Config, single=0):

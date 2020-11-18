@@ -46,7 +46,7 @@ rules = [[rng.choice(a=[Rule.STABLE, Rule.UNSTABLE], p=[p, 1 - p]) for i in rang
 
 state = '$p_{stable}$'
 c_len = 'length'
-data = {c_len: [], state: []}
+data = {c_len: [], state: [], 'p_act': []}
 for metric in metricList:
     data[metric.name] = []
 conf = create_config(c_type, n=args.n)
@@ -58,6 +58,7 @@ for i, p in enumerate(p_actions):
     evol, metrics = evolve(config=conf, perm=pi, steps=args.steps, metricList=metricList, cycleBreak=True)
     data[c_len].append(cycle_length(evol)[0])
     data[state].append(labels[i])
+    data['p_act'].append(p_actions[i])
     for e in metrics:
         data[e.name].append(metrics[e][-1])
 

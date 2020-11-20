@@ -26,7 +26,7 @@ stabList = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8]
 pi = np.random.permutation(size)
 
 rules, metrics = setup()
-out = {'init_magnet': [], 'Energy': [], 'Density': [], 'order': [], 'init_stab': []}
+out = {'init_magnet': [], 'Energy': [], 'Density': [], 'order': [], 'init_stab': [], 'length': []}
 metricList = [Metric.Energy, Metric.Density]
 rng = default_rng()
 for mag, stab in itertools.product(magnetList, stabList):
@@ -51,7 +51,7 @@ for mag, stab in itertools.product(magnetList, stabList):
         for index in both:
             state = rules[config.nodes[index].rule](t, array, config, index)
             array[t][index] = state
-            magn = metrics[Metric.Consensus](array[t], config, single=1)
+        magn = metrics[Metric.Consensus](array[t], config, single=1)
         t += 1
     last = -1 if t > args.steps else t - 1
 

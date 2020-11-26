@@ -17,6 +17,12 @@ def save_fixed_point(config: Config, steps, array, t):
     config_file.close()
 
 
+def order_update(array, config, perm, rules):
+    for index in perm:
+        array[index] = rules[config.nodes[index].rule](t, array, config, index)
+    return array
+
+
 def cycleCheck(config: Config, steps, array, t, fixedPoints=False):
     cycle = None
     length = 0
@@ -52,28 +58,24 @@ def sequential_evolve(t, array, steps, perm, rules, config):
 
 
 def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, light=False,
-                                                        cycleBreak=True, fixedPoints=False):
+                                                        cycleBreak=True):
     if metricList is None:
         metricList = []
     rules, metrics = setup()
     out = {}
-    size = 2 if light else steps + 1
-    array = np.zeros((size, config.size), dtype=np.int8)
+    t_steps = 2 if light else steps + 1
+    array = np.zeros((t_steps, config.size), dtype=np.int8)
     for index in range(config.size):
         array[0][index] = config.nodes[index].state
     t = 1
-    cycle = None
-    length = None
+    cycle, length = None, None
     if light:
         array = light_evolve(t, array, steps, perm, rules, config)
     else:  # regular
         while t <= steps and cycle is None:
-            array[t] = array[t - 1]
-            for index in perm:
-                state = rules[config.nodes[index].rule](t, array, config, index)
-                array[t][index] = state
+            array[t] = order_update(array[t-1].copy(), config, perm, rules)
             if cycleBreak:
-                cycle, length = cycleCheck(config, steps, array, t, fixedPoints=fixedPoints)
+                cycle, length = cycleCheck(config, steps, array, t)
             t += 1
 
     for metric in metricList:
@@ -146,8 +148,7 @@ def evolve_all_configs(n, steps: int, samples: int, perm, p_actions: List[float]
         conf = create_config(configType, n=n, rules=rules[i], **kwargs)
         for j, s in enumerate(itertools.product([State.ON, State.OFF], repeat=size)):
             conf.set_states(list(s))
-            evol, metrics = evolve(config=conf, perm=perm, steps=steps, metricList=metricList, cycleBreak=True,
-                                   fixedPoints=True)
+            evol, metrics = evolve(config=conf, perm=perm, steps=steps, metricList=metricList, cycleBreak=True)
             pos = i * samples + j
             data['length'][pos] = cycle_length(evol)[0]
             data[act_label][pos] = labels[i]

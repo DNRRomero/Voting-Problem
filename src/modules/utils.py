@@ -63,9 +63,8 @@ def states_per_magnet(size, mag, pref=State.ON):
     return states
 
 
-def rules_per_factor(size, fct, pref=Rule.STABLE):
+def rules_per_factor(size, fct, pref1=Rule.STABLE, pref2=Rule.UNSTABLE):
     rng = default_rng()
-    d = 1 if pref == Rule.STABLE else -1
-    rules = [Rule.STABLE] * round(size * (fct + 10 ** (-9))) + [Rule.UNSTABLE] * round(size * (1-fct- 10 ** (-9)))
+    rules = [pref1] * round(size * (fct + 10 ** (-9))) + [pref2] * round(size * (1-fct- 10 ** (-9)))
     rng.shuffle(rules)
     return rules

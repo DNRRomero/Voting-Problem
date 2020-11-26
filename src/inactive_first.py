@@ -30,7 +30,9 @@ stabList = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1]
 pi = np.random.permutation(size)
 
 rules, metrics = setup()
-out = {'init_magnet': [], 'Energy': [], 'Density': [], 'order': [], 'init_stab': [], 'length': []}
+le = 'length'
+out = {'init_magnet': [], 'Energy': [], 'Density': [], 'order': [], 'init_stab': [], le: []}
+
 metricList = [Metric.Energy, Metric.Density]
 rng = default_rng()
 for mag, stab in itertools.product(magnetList, stabList):
@@ -57,8 +59,7 @@ for mag, stab in itertools.product(magnetList, stabList):
 
     for metric in metricList:
         out[metric.name].append(metrics[metric](array[last], config, single=1))
-    out['length'].append(0)
-
+    out[le].append(0)
     out['order'].append('off_first')
     out['init_magnet'].append(mag)
     out['init_stab'].append(stab)
@@ -66,7 +67,7 @@ for mag, stab in itertools.product(magnetList, stabList):
     # Now random order
     evol, vals = evolve(config=config, steps=args.steps, perm=pi, metricList=metricList, cycleBreak=True)
     length, start = cycle_length(evol)
-    out['length'].append(length)
+    out[le].append(length)
     for metric in metricList:
         out[metric.name].append(vals[metric][-1])
     out['order'].append('random')

@@ -90,8 +90,8 @@ class Config(object):
     def type(self):
         return self._type
 
-    def prod(self, t, array, index):
-        return self.adj[index].dot(array[t])[0]
+    def prod(self, array, index):
+        return self.adj[index].dot(array)[0]
 
     def set_states(self, states: List[State]):
         assert len(states) == self.size

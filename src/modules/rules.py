@@ -2,31 +2,31 @@ import numpy as np
 from .data_structure import Config, Rule
 
 
-def stableMajority(t, array: np.ndarray, config: Config, index):
+def stableMajority(array: np.ndarray, config: Config, index):
     even = 1 if config.nodes[index].degree % 2 == 0 else 0
-    state = 1 if config.prod(t, array, index) + even*array[t][index] > 0 else -1
+    state = 1 if config.prod(array, index) + even*array[index] > 0 else -1
     return state
 
 
-def unstableMajority(t, array, config: Config, index):
+def unstableMajority(array, config: Config, index):
     even = 1 if config.nodes[index].degree % 2 == 0 else 0
-    state = 1 if config.prod(t, array, index) - even*array[t][index] > 0 else -1
+    state = 1 if config.prod(array, index) - even*array[index] > 0 else -1
     return state
 
 
-def oneBiased(t, array, config: Config, index):
-    state = 1 if config.prod(t, array, index) >= 0 else -1
+def oneBiased(array, config: Config, index):
+    state = 1 if config.prod(array, index) >= 0 else -1
 
     return state
 
 
-def zeroBiased(t, array, config: Config, index):
-    state = 1 if config.prod(t, array, index) > 0 else -1
+def zeroBiased(array, config: Config, index):
+    state = 1 if config.prod(array, index) > 0 else -1
     return state
 
 
-def stiff(t, array, config: Config, index):
-    return array[t][index]
+def stiff(array, config: Config, index):
+    return array[index]
 
 
 def getRules():

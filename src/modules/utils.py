@@ -4,7 +4,7 @@ from numpy.random import default_rng
 
 from . import Ring
 from . import Torus
-from .data_structure import ConfigType, State, Rule
+from .data_structure import Config, ConfigType, State, Rule
 from .metric import consensus, getMetrics
 from .rules import getRules
 
@@ -57,14 +57,44 @@ def setup():
 def states_per_magnet(size, mag, pref=State.ON):
     rng = default_rng()
     d = 1 if pref == State.ON else -1
+    if mag < 0:
+        mag = abs(mag)
+        d = -d
     states = [State.ON] * round((size * (0.5 + d * mag / 2)) - 10 ** (-9)) + [State.OFF] * round(
         (size * (0.5 - d * mag / 2) + 10 ** (-9)))
     rng.shuffle(states)
     return states
 
 
+def states_against_stiff(config: Config, stiff_type, mag, pref):
+    for node in config.nodes:
+        if node.rule == Rule.STIFF:
+            node.state = stiff_type
+    non_stiff = list(filter(lambda y: y.rule != Rule.STIFF, config.nodes))
+    states = states_per_magnet(len(non_stiff), mag, pref)
+    for i, node in enumerate(non_stiff):
+        node.state = states[i]
+    return config
+
+
+def size_round(size, fct):
+    return round(size * (fct + 10 ** (-9))), round(size * (1 - fct - 10 ** (-9)))
+
+
 def rules_per_factor(size, fct, pref1=Rule.STABLE, pref2=Rule.UNSTABLE):
     rng = default_rng()
-    rules = [pref1] * round(size * (fct + 10 ** (-9))) + [pref2] * round(size * (1-fct- 10 ** (-9)))
+    size1, size2 = size_round(size, fct)
+    rules = [pref1] * size1 + [pref2] * size2
+    rng.shuffle(rules)
+    return rules
+
+
+def rules_per_freeze_and_factor(size, freeze_fct, pref_fct, pref1=Rule.STABLE, pref2=Rule.UNSTABLE):
+    rng = default_rng()
+    freeze_sz1, freeze_sz2 = size_round(size, freeze_fct)
+    pref_sz1, pref_sz2 = size_round(freeze_sz2, pref_fct)
+    rules = [Rule.STIFF] * freeze_sz1 \
+            + [pref1] * pref_sz1 \
+            + [pref2] * pref_sz2
     rng.shuffle(rules)
     return rules

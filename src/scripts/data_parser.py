@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser(description='Converts .out files into .csv data
 parser.add_argument('conf_type', help='Type of configuration object simulated (i.e. Ring or Torus)')
 parser.add_argument('job_num', help='Slurm job id')
 parser.add_argument("-s", "--serial", help="add column with sample number per file", action="store_true")
+parser.add_argument("-l", "--label", help="add additional label before job number")
 
 args = parser.parse_args()
 

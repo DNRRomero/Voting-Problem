@@ -24,8 +24,8 @@ assert (args.first != args.second)
 size = args.n ** 2
 c_type = ConfigType.Torus
 config = create_config(configType=c_type, n=args.n)
-magnetList = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8]
-stabList = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1]
+magnetList = [-0.4, -0.3, -0.2, -0.1]
+stabList = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8]
 
 pi = np.random.permutation(size)
 

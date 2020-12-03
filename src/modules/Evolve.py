@@ -18,6 +18,9 @@ def save_fixed_point(config: Config, steps, array, t):
 
 
 def order_update(array, config, perm, rules):
+    """
+    Updates the current array cells of a configuration according to a fixed order
+    """
     for index in perm:
         array[index] = rules[config.nodes[index].rule](array, config, index)
     return array

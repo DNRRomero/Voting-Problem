@@ -22,7 +22,7 @@ def primes_up_to(n):
 
 def cycle_length(array: np.ndarray):
     """
-    :return: returns cycle pair (length, start)
+    Returns cycle pair (length, start)
     """
     steps, _ = array.shape
 
@@ -55,6 +55,10 @@ def setup():
 
 
 def states_per_magnet(size, mag, pref=State.ON):
+    """
+    returns array of states given by a magnetization value mag, where
+    0.5 +mag/2 arrays cells are of type pref1 and the rest is of type pref2
+    """
     rng = default_rng()
     d = 1 if pref == State.ON else -1
     if mag < 0:
@@ -78,10 +82,17 @@ def states_against_stiff(config: Config, stiff_type, mag, pref):
 
 
 def size_round(size, fct):
+    """
+    Returns the integer fraction (fct, 1-fct) of a certain integer size
+    """
     return round(size * (fct + 10 ** (-9))), round(size * (1 - fct - 10 ** (-9)))
 
 
 def rules_per_factor(size, fct, pref1=Rule.STABLE, pref2=Rule.UNSTABLE):
+    """
+    returns array of majority rules given by an fct fraction
+    of array cells of type pref1 and (1-fct) cells of type pref2
+    """
     rng = default_rng()
     size1, size2 = size_round(size, fct)
     rules = [pref1] * size1 + [pref2] * size2
@@ -90,6 +101,11 @@ def rules_per_factor(size, fct, pref1=Rule.STABLE, pref2=Rule.UNSTABLE):
 
 
 def rules_per_freeze_and_factor(size, freeze_fct, pref_fct, pref1=Rule.STABLE, pref2=Rule.UNSTABLE):
+    """
+    returns array of majority rules given by a freeze_fct fraction of array cells
+    set to be freezing and a pref_fct*(1-freeze_fct) fraction is set to be of type pref1
+    while the rest is of type pref2
+    """
     rng = default_rng()
     freeze_sz1, freeze_sz2 = size_round(size, freeze_fct)
     pref_sz1, pref_sz2 = size_round(freeze_sz2, pref_fct)

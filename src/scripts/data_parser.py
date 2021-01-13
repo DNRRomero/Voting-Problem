@@ -25,6 +25,8 @@ title = '{0}.csv'.format(aux)
 if args.serial:
     df_list = []
     for i, file in enumerate(out_list):
+        if os.path.getsize(file) <=0:
+            continue	
         njob = file.rsplit('_', maxsplit=1)[1].rsplit('.', maxsplit=1)[0]
         serial = args.job_num + njob
         table = pd.read_table(file, sep=',')
@@ -40,7 +42,6 @@ dout = '../../data/{0}/{1}'.format(args.conf_type, title)
 print(dout)
 df.to_csv(dout, encoding='utf-8', index=False)
 
-for file in out_list:
-    os.remove(file)
+
 for file in err_list:
     os.remove(file)

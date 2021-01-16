@@ -26,6 +26,13 @@ def order_update(array, config, perm, rules):
     return array
 
 
+def par_update(array, config, rules):
+    a = np.empty_like(array)
+    for index in range(len(config.nodes)):
+        a[index] = rules[config.nodes[index].rule](array, config, index)
+    return a
+
+
 def cycleCheck(config: Config, steps, array, t, fixedPoints=False):
     cycle = None
     length = 0
@@ -60,8 +67,35 @@ def sequential_evolve(t, array, steps, perm, rules, config):
     return array
 
 
+def parallel_evolve(config: Config, steps=100, metricList=None, cycleBreak=True):
+    if metricList is None:
+        metricList = []
+    rules, metrics = setup()
+    out = {}
+    t_steps = steps + 1
+    array = np.zeros((t_steps, config.size), dtype=np.int8)
+    for index in range(config.size):
+        array[0][index] = config.nodes[index].state
+    t = 1
+    cycle, length = None, None
+    while t <= steps and cycle is None:
+        array[t] = par_update(array[t - 1], config, rules)
+        if cycleBreak:
+            cycle, length = cycleCheck(config, steps, array, t)
+        t += 1
+
+    for metric in metricList:
+        out[metric] = metrics[metric](array, config)
+    if cycle is not None:
+        # If there is a cycle, copy the average metric value in cycle at the last entry
+        for metric in metricList:
+            out[metric][-1] = np.mean(out[metric][cycle: cycle + length])
+
+    return array, out
+
+
 def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, light=False,
-                                                        cycleBreak=True):
+           cycleBreak=True):
     if metricList is None:
         metricList = []
     rules, metrics = setup()
@@ -76,7 +110,7 @@ def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, light=F
         array = light_evolve(t, array, steps, perm, rules, config)
     else:  # regular
         while t <= steps and cycle is None:
-            array[t] = order_update(array[t-1].copy(), config, perm, rules)
+            array[t] = order_update(array[t - 1].copy(), config, perm, rules)
             if cycleBreak:
                 cycle, length = cycleCheck(config, steps, array, t)
             t += 1

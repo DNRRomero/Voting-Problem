@@ -16,7 +16,6 @@ def unstableMajority(array, config: Config, index):
 
 def oneBiased(array, config: Config, index):
     state = 1 if config.prod(array, index) >= 0 else -1
-
     return state
 
 

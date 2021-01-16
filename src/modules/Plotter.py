@@ -52,7 +52,7 @@ def plot_config(config: Config, which='both'):
 
     elif which == 'rule' or which == 'state':
         fig, ax = plt.subplots()
-        title = 'Node {0} visualization'.format(which)
+        title = ''
         ax.set_title(title)
         im = ax.imshow(option, cmap=cmap)
         ax.set_yticks([])
@@ -60,6 +60,7 @@ def plot_config(config: Config, which='both'):
 
     else:
         assert False
+    return fig
 
 
 def plot_config_sns(config: Config, which='both'):

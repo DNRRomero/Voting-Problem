@@ -2,8 +2,7 @@ import numpy as np
 import scipy.spatial as scp
 from numpy.random import default_rng
 
-from . import Ring
-from . import Torus
+from . import Ring, Torus, Graph_factory
 from .data_structure import Config, ConfigType, State, Rule
 from .metric import consensus, getMetrics
 from .rules import getRules
@@ -42,8 +41,10 @@ def create_config(configType: ConfigType, **kwargs):
         ConfigType.Ring:
             Ring.createRing,
         ConfigType.Torus:
-            Torus.createTorus
-        # ConfigType.Graph:
+            Torus.createTorus,
+        ConfigType.Graph:
+            Graph_factory.create
+
 
     }
     func = switcher.get(configType, lambda: "invalid")
@@ -87,6 +88,15 @@ def size_round(size, fct):
     """
     return round(size * (fct + 10 ** (-9))), round(size * (1 - fct - 10 ** (-9)))
 
+
+def rules_per_ratio(size, rat, pref1=Rule.STABLE, pref2=Rule.UNSTABLE):
+    """
+    returns array of majority rules given by ratio rat/size-rat
+    between cells of type pref1 and thos of type pref2   """
+    rng = default_rng()
+    rules = [pref1]*rat + [pref2]*(size-rat)
+    rng.shuffle(rules)
+    return rules
 
 def rules_per_factor(size, fct, pref1=Rule.STABLE, pref2=Rule.UNSTABLE):
     """

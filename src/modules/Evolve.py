@@ -33,6 +33,10 @@ def par_update(array, config, rules):
     return a
 
 
+def is_cycle(array, t):
+    return len(array) != len(np.unique(array[0:t + 1], axis=0))
+
+
 def cycleCheck(config: Config, steps, array, t, fixedPoints=False):
     cycle = None
     length = 0
@@ -102,8 +106,9 @@ def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, light=F
     out = {}
     t_steps = 2 if light else steps + 1
     array = np.zeros((t_steps, config.size), dtype=np.int8)
-    for index in range(config.size):
-        array[0][index] = config.nodes[index].state
+    array[0] = np.array([a.state for a in config.nodes])
+    # for index in range(config.size):
+    #     array[0][index] = config.nodes[index].state
     t = 1
     cycle, length = None, None
     if light:

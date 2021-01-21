@@ -62,7 +62,6 @@ class Node(object):
         return "Node([{0}, {1}, {2}, {3}])".format(repr(self.id), repr(self.state), repr(self.rule), repr(self.degree))
 
 
-
 class Config(object):
     def __init__(self, adj: sparse.csr_matrix, nodes, tp: ConfigType):
         self._adj = adj
@@ -111,5 +110,3 @@ class Config(object):
 
     def get_rules(self):
         return [node.rule for node in self.nodes]
-
-

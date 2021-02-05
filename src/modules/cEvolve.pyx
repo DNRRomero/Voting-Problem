@@ -67,12 +67,12 @@ def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, cycleBr
     if metricList is None:
         metricList = []
     rules, metrics = setup()
-    cdef int[:] perm_view = perm
+    cdef long[:] perm_view = perm
     cdef int size = config.size
     cdef int t_steps = steps + 1
     cdef int length
     cdef int t, i;
-    cdef int[:, ::1] array = np.zeros((t_steps, size), dtype=np.int8)
+    cdef unsigned char[:, ::1] array = np.zeros((t_steps, size), dtype=np.int8)
     array[0] = np.array([a.state for a in config.nodes])
     cycle = False
     out = {}

@@ -20,7 +20,7 @@ size = args.n ** 2
 c_type = ConfigType.Torus
 p_state = 0.5
 
-r_factor =[4 * i for i in range(21)]
+r_factor =[4 * i for i in range(181,257)]
 
 if args.seed != -1:
     np.random.seed(args.seed)
@@ -44,8 +44,9 @@ for i, p in enumerate(r_factor):
     conf.set_rules(rules)
     evol, metrics = evolve(config=conf, perm=pi, steps=args.steps, metricList=metricList, cycleBreak=True)
     data[c_len].append(cycle_length(evol)[0])
-    data[state].append(p/size)
-    data['p_act'].append(p)
+    rstab = p/(size-p) if size != p else np.inf
+    data[state].append(rstab)
+    data['fct'].append(p)
     for e in metrics:
         data[e.name].append(metrics[e][-1])
 

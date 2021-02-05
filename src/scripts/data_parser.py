@@ -37,7 +37,7 @@ try:
             table['sample'] = nrows * [serial]
             df_list.append(table)
     else:
-        df_list = [pd.read_table(file, sep=',') for file in out_list]
+        df_list = [pd.read_table(file, sep=',') for file in out_list if os.path.getsize(file)>0]
 
     df = pd.concat(df_list)
 

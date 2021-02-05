@@ -19,7 +19,7 @@ args = parser.parse_args()
 c_type = ConfigType.Ring
 p_state = 0.5
 
-r_factor = [4 * i for i in range(21)]
+r_factor = [4 * i for i in range(221,257)]
 
 if args.seed != -1:
     np.random.seed(args.seed)
@@ -43,7 +43,8 @@ for i, p in enumerate(r_factor):
     conf.set_rules(rules)
     evol, metrics = evolve(config=conf, perm=pi, steps=args.steps, metricList=metricList, cycleBreak=True)
     data[c_len].append(cycle_length(evol)[0])
-    data[state].append(p/args.n)
+    val = np.nan if args.n == p else (p/(args.n-p))
+    data[state].append(val)
     data['fct'].append(p)
     for e in metrics:
         data[e.name].append(metrics[e][-1])

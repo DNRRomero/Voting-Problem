@@ -11,5 +11,5 @@ def create(size: int, g_type: str, seed=None, **kwargs):
         'regular': nx.generators.random_regular_graph(n=size, seed=seed, **kwargs),
         'small-world': nx.generators.connected_watts_strogatz_graph(n=n, seed=seed, **kwargs),
     }
-    G = factory[g_type]
+    G = factory.get(g_type)
     return nx.adjacency_matrix(G)

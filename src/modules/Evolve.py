@@ -61,15 +61,6 @@ def light_evolve(t, array, steps, perm, rules, config):
     return array
 
 
-def sequential_evolve(t, array, steps, perm, rules, config):
-    while t <= config.size * steps:
-        for index in perm:
-            array[t] = array[t - 1]
-            state = rules[config.nodes[index].rule](t - 1, array, config, index)
-            array[t][index] = state
-            t += 1
-    return array
-
 
 def parallel_evolve(config: Config, steps=100, metricList=None, cycleBreak=True):
     if metricList is None:
@@ -107,23 +98,24 @@ def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, light=F
     t_steps = 2 if light else steps + 1
     array = np.zeros((t_steps, config.size), dtype=np.int8)
     array[0] = np.array([a.state for a in config.nodes])
-    # for index in range(config.size):
-    #     array[0][index] = config.nodes[index].state
+
     t = 1
-    cycle, length = None, None
+    cycle, length = False, None
     if light:
         array = light_evolve(t, array, steps, perm, rules, config)
     else:  # regular
-        while t <= steps and cycle is None:
+        while t <= steps and cycle:
             array[t] = order_update(array[t - 1].copy(), config, perm, rules)
             if cycleBreak:
-                cycle, length = cycleCheck(config, steps, array, t)
+                # cycle, length = cycleCheck(config, steps, array, t)
+                cycle = is_cycle(array, t)
             t += 1
 
     for metric in metricList:
         out[metric] = metrics[metric](array, config)
-    if cycle is not None:
+    if cycle:
         # If there is a cycle, copy the average metric value in cycle at the last entry
+        cycle, length = cycleCheck(config, steps, array, t)
         for metric in metricList:
             out[metric][-1] = np.mean(out[metric][cycle: cycle + length])
 

@@ -19,10 +19,10 @@ def par_update(array, config, rules):
 
 
 def is_cycle(array, t):
-    return len(array) != len(np.unique(array[0:t + 1], axis=0))
+    return t+1 != len(np.unique(array[0:t + 1], axis=0))
 
 
-def cycleCheck(config: Config, steps, array, t, fixedPoints=False):
+def cycleCheck(config: Config, steps, array, t):
     cycle = None
     length = 0
     for start in range(t):
@@ -72,25 +72,28 @@ def evolve(config: Config, perm: np.ndarray, steps=100, metricList=None, cycleBr
     cdef int t_steps = steps + 1
     cdef int length
     cdef int t, i;
-    cdef unsigned char[:, ::1] array = np.zeros((t_steps, size), dtype=np.int8)
-    array[0] = np.array([a.state for a in config.nodes])
+    cdef signed char[:, ::1] array = np.zeros((t_steps, size), dtype=np.int8)
+    cdef signed char[::1] init = np.array([a.state for a in config.nodes], dtype=np.int8)
+    array[0,:] = init
     cycle = False
     out = {}
 
     for t in range(1, t_steps):
+        array[t,:] = array[t-1,:]
         for i in range(size):
-            array[t, perm_view[i]] = rules[config.nodes[perm_view[i]].rule](array, config, perm_view[i])
+            array[t, perm_view[i]] = rules[config.nodes[perm_view[i]].rule](array[t], config, perm_view[i])
         if cycleBreak:
             cycle = is_cycle(array, t)
             if cycle:
                 break
 
+    evol = np.asarray(array)
     for metric in metricList:
-        out[metric] = metrics[metric](array, config)
+        out[metric] = metrics[metric](evol, config)
     if cycle:
         # If there is a cycle, copy the average metric value in cycle at the last entry
-        cycle, length = cycleCheck(config, steps, array, t)
+        cycle, length = cycleCheck(config, steps, evol, t)
         for metric in metricList:
-            out[metric][t_steps] = np.mean(out[metric][cycle: cycle + length])
+            out[metric][steps] = np.mean(out[metric][cycle: cycle + length])
 
     return array, out

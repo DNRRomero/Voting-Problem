@@ -6,27 +6,23 @@ from .data_structure import Config
 
 
 def density(array: np.ndarray, config: Config, single=0):
-    dens = lambda a: (1 + a).sum() / (2 * config.size)
-    if single:
-        return dens(array)
-    steps, size = array.shape
-    return [dens(array[i]) for i in range(steps)]
+    dens = lambda a: (1 + a).sum(axis=1-single) / (2 * config.size)
+    return dens(array)
 
 
 def energy(array: np.ndarray, config: Config, single=0):
-    e = lambda x: -0.5 * (x.dot(config.adj.dot(x)))
     if single:
-        return e(array) / config.edges
-    steps, _ = array.shape
-    return [(e(array[i])) / config.edges for i in range(steps)]
+        return -0.5 * (array.dot(config.adj.dot(array))) / config.edges
+    return -0.5*np.einsum('ij,ij->i', array, array@config.adj.T)/config.edges
 
 
 def consensus(array: np.ndarray, config: Config = None, single=0):
-    c = lambda x: np.abs(x.sum())
-    if single:
-        return c(array)/config.size
-    steps, size = array.shape
-    return [c(array[i]) / size for i in range(steps)]
+    return np.abs(array.sum(axis=1-single))/config.size
+    # c = lambda x: np.abs(x.sum())
+    # if single:
+    #     return c(array)/config.size
+    # steps, size = array.shape
+    # return [c(array[i]) / size for i in range(steps)]
 
 
 def hamming(array: np.ndarray, config: Config, single=0):

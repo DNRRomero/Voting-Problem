@@ -3,7 +3,7 @@ import pandas as pd
 from numpy.random import default_rng
 import argparse
 
-from modules.Evolve import evolve
+from modules.cEvolve import evolve
 from modules.data_structure import ConfigType, Rule, State
 from modules.metric import Metric
 from modules.utils import create_config, cycle_length, rules_per_ratio, states_per_magnet
@@ -19,7 +19,7 @@ args = parser.parse_args()
 c_type = ConfigType.Ring
 p_state = 0.5
 
-r_factor = [4 * i for i in range(221,257)]
+r_factor = [4 * i for i in range(0,65)]
 
 if args.seed != -1:
     np.random.seed(args.seed)
@@ -43,8 +43,8 @@ for i, p in enumerate(r_factor):
     conf.set_rules(rules)
     evol, metrics = evolve(config=conf, perm=pi, steps=args.steps, metricList=metricList, cycleBreak=True)
     data[c_len].append(cycle_length(evol)[0])
-    val = np.nan if args.n == p else (p/(args.n-p))
-    data[state].append(val)
+    rstab = p/(args.n-p) if args.n != p else np.inf
+    data[state].append(rstab)
     data['fct'].append(p)
     for e in metrics:
         data[e.name].append(metrics[e][-1])
